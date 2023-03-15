@@ -79,5 +79,24 @@ namespace Tests.Common.Maths
 
             act.Should().Throw<ArgumentOutOfRangeException>();
         }
+
+        [TestCase(0, 0, 0.1)]
+        [TestCase(-10, -0.09999546, 0.1)]
+        [TestCase(-100, -0.1, 0.1)]
+        [TestCase(-100, -0.5, 0.5)]
+        [TestCase(999, 999, 0.1)]
+        public void ELuActivator_Should_Return_CorrectValues(double input, double output, double alpha)
+        {
+            var result = new ELuActivator(alpha).Activate(input);
+            result.Should().BeApproximately(output, 0.00000001);
+        }
+
+        [Test]
+        public void ELuActivator_Should_Throw_ArgumentOutOfRangeException_When_AlphaIsNegative()
+        {
+            Action act = () => new ELuActivator(-0.1);
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
     }
 }
