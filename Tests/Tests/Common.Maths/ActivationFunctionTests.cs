@@ -98,5 +98,15 @@ namespace Tests.Common.Maths
 
             act.Should().Throw<ArgumentOutOfRangeException>();
         }
+
+        [TestCase(0, 0)]
+        [TestCase(0.458, 0.28054314)]
+        [TestCase(1.6, 1.33122941)]
+        [TestCase(-3, -0.14227761)]
+        public void SwishActivator_Should_Return_CorrectValues(double input, double output)
+        {
+            var result = new SwishActivator().Activate(input);
+            result.Should().BeApproximately(output, 0.00000001);
+        }
     }
 }
