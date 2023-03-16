@@ -1,37 +1,36 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Domain.Model.Neuron
+namespace SupervisedLearning.ANN.Neuron
 {
     public class Neuron
     {
-        public double Output { get; }
-        public Matrix<double> Inputs { get; }
-        private Func<double, double> Activator { get; }
+        public double Output { get; private set; }
+        public double Bias { get; }
+        public Vector<double> Inputs { get; }
+        public Vector<double> Weights { get; }
+        public Func<double, double> Activator { get; }
 
-        private Neuron(Matrix<double> inputs, Func<double, double> activator)
+        private Neuron(Vector<double> inputs, Vector<double> weights, double bias, Func<double, double> activator)
         {
             Inputs = inputs;
+            Weights = weights;
+            Bias = bias;
             Activator = activator;
         }
 
-        public static Neuron Create(Matrix<double> inputs, Func<double, double> activator)
+        public static Neuron Create(Vector<double> inputs, Vector<double> weights, double bias, Func<double, double> activator)
         {
-            return new Neuron(inputs, activator);
+            return new Neuron(inputs, weights, bias, activator);
         }
 
-        public double Activate()
+        public void Activate()
         {
-            return Activator(SumInputs());
+            Output = Activator(SumInputs());
         }
 
         private double SumInputs()
         {
-            return 0.0;
+            return Inputs.PointwiseMultiply(Weights).Sum() + Bias;
         }
     }
 }

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Maths", "Source\Common.Maths\Common.Maths.csproj", "{E319C933-F479-41E0-9736-F6E38D5768FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Model", "Source\Domain.Model\Domain.Model.csproj", "{2BB85ED6-EAB2-474D-B309-5DBE74F26D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ANN", "Source\Domain.Model\ANN.csproj", "{2BB85ED6-EAB2-474D-B309-5DBE74F26D53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests\Tests.csproj", "{03340D7E-ADFA-4B4F-9DCB-7EC717CFFDC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests\Tests.csproj", "{03340D7E-ADFA-4B4F-9DCB-7EC717CFFDC3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2BB85ED6-EAB2-474D-B309-5DBE74F26D53} = {2BB85ED6-EAB2-474D-B309-5DBE74F26D53}
 		{E319C933-F479-41E0-9736-F6E38D5768FA} = {E319C933-F479-41E0-9736-F6E38D5768FA}
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests\Tests.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1BBA290D-1EB8-4627-911C-0D4CFB321087}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{0B5221D9-7C84-417D-B0A1-85DF48CA2B12}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SupervisedLearning", "SupervisedLearning", "{0B5221D9-7C84-417D-B0A1-85DF48CA2B12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
