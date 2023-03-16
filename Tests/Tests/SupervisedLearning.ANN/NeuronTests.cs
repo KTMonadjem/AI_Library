@@ -33,8 +33,14 @@ namespace Tests.Domain.Model
             neuron.Activate();
             var output = neuron.Output;
 
-            // 1 + 4 + 9 + 16 + 25 + 10 = 65
-            output.Should().Be(65);
+            var expected = Bias;
+            for (var i = 0; i < _inputs.Count; i++)
+            {
+                expected += _inputs[i] * _weights[i];
+            }
+            expected = _activator.Activate(expected);
+
+            output.Should().Be(expected);
         }
     }
 }
