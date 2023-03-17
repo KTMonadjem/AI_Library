@@ -119,7 +119,16 @@ namespace ANN
                 throw new InvalidOperationException("ANN must be built before being run");
             }
 
-            _outputs = Vector<double>.Build.Dense(Array.Empty<double>());
+            // We only care about the last layers neurons.
+            var finalLayerCount = Layers.Last().Neurons.Count;
+            var outputs = new double[Layers.Last().Neurons.Count];
+            for (var i = 0; i < finalLayerCount; i++)
+            {
+                // Fetching a neuron's output will fetch the parent's output too
+                outputs[i] = Layers.Last().Neurons[i].Output;
+            }
+
+            _outputs = Vector<double>.Build.Dense(outputs);
 
             _hasRun = true;
             _inputsModified = false;

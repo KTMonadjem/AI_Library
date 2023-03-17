@@ -181,5 +181,40 @@ namespace Tests.SupervisedLearning.ANN
 
             act.Should().NotThrow<InvalidOperationException>();
         }
+
+        /// <summary>
+        ///         0.0 -> 0.0            0.0 -> 0.0
+        /// 0.5 ->  0.5 -> 0.25
+        /// 1.0 ->  1.0 -> 1.0 -> 1.25 -> 0.5 -> 0.625
+        ///         1.0 -> 1.0
+        /// 0.5 ->  0.5 -> 0.25
+        /// 1.0 ->  0.0 -> 0.0 -> 1.25 -> 1.0 -> 1.25    -> 1.875
+        /// </summary>
+        [Test]
+        public void ANN_Runs_Correctly()
+        {
+            var inputs = V.DenseOfArray(new double[] { 0.5, 1.0 });
+
+            var firstLayerWeights = new double[,]
+            {
+                { 0, 0.5, 1.0 },
+                { 1.0, 0.5, 0 }
+            };
+            var secondLayerWeights = new double[,]
+            {
+                { 0, 0.5, 1.0 }
+            };
+
+            var firstLayer = Layer.Create(M.DenseOfArray(firstLayerWeights), _activator);
+            var secondLayer = Layer.Create(M.DenseOfArray(secondLayerWeights), _activator);
+
+
+            var layers = new List<Layer> { firstLayer, secondLayer };
+            var ann = A.Create(layers, inputs).Build();
+
+            var result = ann.Outputs;
+
+            result.Should().BeEquivalentTo(V.DenseOfArray(new double[] { 1.875 }));
+        }
     }
 }
