@@ -11,6 +11,7 @@ namespace Tests.SupervisedLearning.ANN
     public class LayerTests
     {
         private static readonly MatrixBuilder<double> M = Matrix<double>.Build;
+        private static readonly VectorBuilder<double> V = Vector<double>.Build;
         private static readonly IActivationFunction _activator = new LinearActivator();
 
         private const int _numberOfNeurons = 10;
@@ -34,11 +35,11 @@ namespace Tests.SupervisedLearning.ANN
         {
             var layer = Layer.CreateWithRandomWeights(numberOfNeurons, numberOfWeights, minWeight, maxWeight, _activator);
 
-            layer.Build();
+            layer.BuildWeights();
             layer.Neurons.Should().HaveCount(numberOfNeurons);
             foreach (var neuron in layer.Neurons)
             {
-                neuron.Weights.Should().HaveCount(numberOfWeights - 1);
+                neuron.Weights.Should().HaveCount(numberOfWeights);
                 neuron.Bias.Should().BeInRange(minWeight, maxWeight);
                 foreach (var weight in neuron.Weights)
                 {
@@ -76,10 +77,10 @@ namespace Tests.SupervisedLearning.ANN
         }
 
         [TestCaseSource(nameof(LayerDataSources))]
-        public void Build_Should_CorrectlyBuildNeurons(double[,] weightInputs, int numberOfNeurons, int numberOfWeights)
+        public void BuildWeights_Should_CorrectlyBuildNeuronWeights(double[,] weightInputs, int numberOfNeurons, int numberOfWeights)
         {
             var weightsMatrix = M.DenseOfArray(weightInputs);
-            var layer = Layer.Create(weightsMatrix, _activator).Build();
+            var layer = Layer.Create(weightsMatrix, _activator).BuildWeights();
 
             layer.Neurons.Should().HaveCount(numberOfNeurons);
             var weights = weightInputs.Cast<double>().ToList();
@@ -118,5 +119,77 @@ namespace Tests.SupervisedLearning.ANN
                 { 7, 8, 9, 0 }
             }, 3, 4}
         };
+
+        [Test]
+        public void AddInputs_Should_ThrowException_When_InputsAndNeuronsDoNotMatch()
+        {
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
+            Action act = () => layer.AddInputs(V.DenseOfArray(new double[] { }));
+
+            act.Should().Throw<ArgumentException>().WithMessage("Must have the same number of inputs as neurons");
+        }
+
+        [Test]
+        public void AddInputs_Should_Succeed_When_InputsAreValid()
+        {
+            var inputs = new double[_numberOfNeurons];
+            for (var i = 0; i < _numberOfNeurons; i++)
+            {
+                inputs[i] = i;
+            }
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, 1, _minWeight, _maxWeight, _activator)
+                .BuildWeights()
+                .AddInputs(V.DenseOfArray(inputs));
+
+            for (var i = 0; i < layer.Neurons.Count; i++)
+            {
+                layer.Neurons[i].Inputs.Should().HaveCount(1);
+                layer.Neurons[i].Inputs![0].Should().Be(inputs[i]);
+            }
+        }
+
+        [Test]
+        public void AddParents_Should_ThrowException_When_NoParentsProvided()
+        {
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
+            Action act = () => layer.AddParents(Array.Empty<Neuron>().ToList());
+
+            act.Should().Throw<ArgumentException>().WithMessage("Parents must be provided to add parents to this layer");
+        }
+
+        [Test]
+        public void AddParents_Should_Succeed_When_ValidParents()
+        {
+            var weights = Vector<double>.Build.Dense(new double[] { });
+            var parents = new List<Neuron>
+            {
+                Neuron.Create(weights, 0, _activator.Activate),
+                Neuron.Create(weights.Multiply(2), 0, _activator.Activate)
+            };
+            var layer = Layer.CreateWithRandomWeights(parents.Count, parents.Count, 0, 1, _activator)
+                .BuildWeights()
+                .AddParents(parents);
+
+            foreach (var neuron in layer.Neurons)
+            {
+                neuron.Parents.Should().BeEquivalentTo(parents);
+            }
+        }
+
+        [Test]
+        public void AddParentLayer_Should_Succeed_When_ValidParents()
+        {
+            var parentCount = 2;
+            var parents = Layer.CreateWithRandomWeights(parentCount, parentCount, 0, 1, _activator)
+                .BuildWeights();
+            var layer = Layer.CreateWithRandomWeights(parentCount, parentCount, 0, 1, _activator)
+                .BuildWeights()
+                .AddParentLayer(parents);
+
+            foreach (var neuron in layer.Neurons)
+            {
+                neuron.Parents.Should().BeEquivalentTo(parents.Neurons);
+            }
+        }
     }
 }
