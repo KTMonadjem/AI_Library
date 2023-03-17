@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests\Tests.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1BBA290D-1EB8-4627-911C-0D4CFB321087}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SupervisedLearning", "SupervisedLearning", "{0B5221D9-7C84-417D-B0A1-85DF48CA2B12}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Learning.Supervised", "Learning.Supervised", "{0B5221D9-7C84-417D-B0A1-85DF48CA2B12}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Learning", "Learning", "{4FBD8B5A-185D-494F-BA6E-E17D0204470E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

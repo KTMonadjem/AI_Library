@@ -1,10 +1,10 @@
 ﻿using Common.Maths.ActivationFunction;
-using SupervisedLearning.ANN.Neuron;
 using FluentAssertions;
 using MathNet.Numerics.LinearAlgebra;
 using Common.Maths.ActivationFunction.Interface;
+using Learning.Supervised.ANN.Structure;
 
-namespace Tests.Domain.Model
+namespace Tests.Supervised.Learning.ANN.Structure
 {
     [TestFixture]
     public class NeuronTests

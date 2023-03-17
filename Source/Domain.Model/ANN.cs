@@ -1,7 +1,7 @@
-﻿using ANN.Structure.Layer;
+﻿using Learning.Supervised.ANN.Structure;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace ANN
+namespace Learning.Supervised.ANN
 {
     public class ANN
     {

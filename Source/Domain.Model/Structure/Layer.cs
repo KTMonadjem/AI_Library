@@ -1,8 +1,7 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
-using SupervisedLearning.ANN.Neuron;
 
-namespace ANN.Structure.Layer
+namespace Learning.Supervised.ANN.Structure
 {
     public class Layer
     {

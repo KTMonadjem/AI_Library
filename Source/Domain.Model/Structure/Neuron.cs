@@ -1,15 +1,16 @@
 ﻿using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace SupervisedLearning.ANN.Neuron
+namespace Learning.Supervised.ANN.Structure
 {
     public class Neuron
     {
         private bool _hasActivated = false;
         private double _output;
 
-        public double Output { 
-            get 
+        public double Output
+        {
+            get
             {
                 if (!_hasActivated)
                 {
@@ -38,7 +39,7 @@ namespace SupervisedLearning.ANN.Neuron
             return new Neuron(null, null, weights, bias, activator);
         }
 
-        public static Neuron CreateWithParents(List<Neuron>parents, Vector<double> weights, double bias, Func<double, double> activator)
+        public static Neuron CreateWithParents(List<Neuron> parents, Vector<double> weights, double bias, Func<double, double> activator)
         {
             if (parents.Count != weights.Count)
             {

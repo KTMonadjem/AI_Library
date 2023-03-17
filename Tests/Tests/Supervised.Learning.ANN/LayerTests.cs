@@ -1,11 +1,10 @@
-﻿using ANN.Structure.Layer;
+﻿using Learning.Supervised.ANN.Structure;
 using Common.Maths.ActivationFunction.Interface;
 using Common.Maths.ActivationFunction;
 using FluentAssertions;
 using MathNet.Numerics.LinearAlgebra;
-using SupervisedLearning.ANN.Neuron;
 
-namespace Tests.SupervisedLearning.ANN
+namespace Tests.Supervised.Learning.ANN.Structure
 {
     [TestFixture]
     public class LayerTests

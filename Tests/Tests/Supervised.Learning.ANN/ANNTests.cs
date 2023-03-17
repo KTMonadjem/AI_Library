@@ -1,12 +1,11 @@
-﻿using ANN.Structure.Layer;
+﻿using Learning.Supervised.ANN.Structure;
 using Common.Maths.ActivationFunction.Interface;
 using Common.Maths.ActivationFunction;
 using FluentAssertions;
 using MathNet.Numerics.LinearAlgebra;
-using A = ANN.ANN;
-using MathNet.Numerics.Distributions;
+using A = Learning.Supervised.ANN.ANN;
 
-namespace Tests.SupervisedLearning.ANN
+namespace Tests.Supervised.Learning.ANN
 {
     [TestFixture]
     public class ANNTests
