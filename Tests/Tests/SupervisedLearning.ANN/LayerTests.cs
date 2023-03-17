@@ -13,6 +13,11 @@ namespace Tests.SupervisedLearning.ANN
         private static readonly MatrixBuilder<double> M = Matrix<double>.Build;
         private static readonly IActivationFunction _activator = new LinearActivator();
 
+        private const int _numberOfNeurons = 10;
+        private const int _numberOfWeights = 20;
+        private const double _minWeight = -0.5;
+        private const double _maxWeight = 0.75;
+
         [TestCaseSource(nameof(LayerDataSources))]
         public void Create_Should_CreateCorrectly(double[,] weightInputs, int numberOfNeurons, int numberOfWeights)
         {
@@ -20,6 +25,54 @@ namespace Tests.SupervisedLearning.ANN
             var layer = Layer.Create(weightsMatrix, _activator);
             layer.Weights.Should().BeEquivalentTo(M.DenseOfArray(weightInputs));
             layer.Activator.Should().BeEquivalentTo(_activator);
+        }
+
+        [TestCase(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight)]
+        [TestCase(100, 200, 0, 1)]
+        [TestCase(1, 1, 0, 10)]
+        public void CreateWithRandomWeights_Should_CreateWithRandomWeightsCorrectly(int numberOfNeurons, int numberOfWeights, double minWeight, double maxWeight)
+        {
+            var layer = Layer.CreateWithRandomWeights(numberOfNeurons, numberOfWeights, minWeight, maxWeight, _activator);
+
+            layer.Build();
+            layer.Neurons.Should().HaveCount(numberOfNeurons);
+            foreach (var neuron in layer.Neurons)
+            {
+                neuron.Weights.Should().HaveCount(numberOfWeights - 1);
+                neuron.Bias.Should().BeInRange(minWeight, maxWeight);
+                foreach (var weight in neuron.Weights)
+                {
+                    weight.Should().BeInRange(minWeight, maxWeight);
+                }
+            }
+            layer.Activator.Should().BeEquivalentTo(_activator);
+        }
+
+        [TestCase(0)]
+        [TestCase(-10)]
+        public void CreateWithRandomWeights_Should_ThrowException_When_TooFewNeurons(int numberOfNeurons)
+        {
+            Action act = () => Layer.CreateWithRandomWeights(numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator);
+
+            act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with neurons");
+        }
+
+        [TestCase(0)]
+        [TestCase(-10)]
+        public void CreateWithRandomWeights_Should_ThrowException_When_TooFewWeights(int numberOfWeights)
+        {
+            Action act = () => Layer.CreateWithRandomWeights(_numberOfNeurons, numberOfWeights, _minWeight, _maxWeight, _activator);
+
+            act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
+        }
+
+        [TestCase(5, 0)]
+        [TestCase(0.1, -0.1)]
+        public void CreateWithRandomWeights_Should_ThrowException_When_MinWeightLessThanMaxWeight(double minWeight, double maxWeight)
+        {
+            Action act = () => Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, minWeight, maxWeight, _activator);
+
+            act.Should().Throw<ArgumentException>().WithMessage("Min weight must be less than max weight");
         }
 
         [TestCaseSource(nameof(LayerDataSources))]
