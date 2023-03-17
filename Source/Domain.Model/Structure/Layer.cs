@@ -19,6 +19,10 @@ namespace ANN.Structure.Layer
 
         public static Layer Create(Matrix<double> weights, IActivationFunction activator) 
         { 
+            if (weights.ColumnCount == 0 && weights.RowCount == 0)
+            {
+                throw new ArgumentException("Layer must be created with weights");
+            }
             return new Layer(weights, activator); 
         }
 

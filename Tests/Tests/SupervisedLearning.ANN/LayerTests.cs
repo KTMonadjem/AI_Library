@@ -3,6 +3,7 @@ using Common.Maths.ActivationFunction.Interface;
 using Common.Maths.ActivationFunction;
 using FluentAssertions;
 using MathNet.Numerics.LinearAlgebra;
+using SupervisedLearning.ANN.Neuron;
 
 namespace Tests.SupervisedLearning.ANN
 {
@@ -40,9 +41,16 @@ namespace Tests.SupervisedLearning.ANN
             }
         }
 
+        [Test]
+        public void Create_Should_ThrowException_When_WeightsAreEmpty()
+        {
+            Action act = () => Layer.Create(M.DenseOfArray(new double[,] { }), _activator);
+
+            act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
+        }
+
         public static object[] LayerDataSources =
         {
-            new object[] { new double[,] {}, 0, 0},
             new object[] { new double[,] { { 1, 2, 3 } }, 1, 3},
             new object[] { new double[,]
             {
