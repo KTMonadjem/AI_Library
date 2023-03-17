@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Tests.Supervised.Learning.Training
 {
     [TestFixture]
-    public class BackPropagationTests
+    public class GradientDescentTests
     {
     }
 }
