@@ -11,7 +11,7 @@ namespace ANN
         private Vector<double> _outputs;
 
 
-        public List<Layer> Layers { get; }
+        public List<Layer> Layers { get; } = new List<Layer>();
         public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense(Array.Empty<double>());
         public Vector<double> Outputs {
             get
@@ -26,13 +26,10 @@ namespace ANN
 
         private ANN()
         {
-            Layers = new List<Layer>();
         }
 
         private ANN(List<Layer> layers, Vector<double> inputs)
         {
-            Layers = new List<Layer>();
-
             SetInputs(inputs);
             AddLayers(layers);
         }
@@ -69,8 +66,16 @@ namespace ANN
 
         public ANN Build()
         {
-            _hasBeenBuilt = true;
+            if (!Layers.Any())
+            {
+                throw new InvalidOperationException("ANN must have layers to build");
+            }
+            if (!Inputs.Any())
+            {
+                throw new InvalidOperationException("ANN must have inputs to build");
+            }
 
+            _hasBeenBuilt = true;
             return this;
         }
 
@@ -81,9 +86,10 @@ namespace ANN
                 throw new InvalidOperationException("ANN must be built before being run");
             }
 
+            _outputs = Vector<double>.Build.Dense(Array.Empty<double>());
+
             _hasRun = true;
             _inputsModified = false;
-            _outputs = Vector<double>.Build.Dense(Array.Empty<double>());
         }
     }
 }

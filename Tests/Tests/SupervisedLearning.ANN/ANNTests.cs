@@ -82,6 +82,30 @@ namespace Tests.SupervisedLearning.ANN
         }
 
         [Test]
+        public void Build_Should_Fail_When_NoLayers()
+        {
+            Action act = () => A.Create().Build();
+
+            act.Should().Throw<InvalidOperationException>().WithMessage("ANN must have layers to build");
+        }
+
+        [Test]
+        public void Build_Should_Fail_When_NoInputs()
+        {
+            var ann = A.Create();
+            ann.AddLayers(_layers);
+            Action act = () => ann.Build();
+
+            act.Should().Throw<InvalidOperationException>().WithMessage("ANN must have inputs to build");
+        }
+
+        [Test]
+        public void Build_Should_Succeed_When_ANNIsSetup()
+        {
+
+        }
+
+        [Test]
         public void ANN_That_HasNotBeenBuilt_Should_NotRun()
         {
             var ann = A.Create();
