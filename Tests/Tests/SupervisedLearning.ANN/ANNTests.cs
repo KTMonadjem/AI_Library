@@ -163,7 +163,20 @@ namespace Tests.SupervisedLearning.ANN
         [Test]
         public void ANN_That_HasBeenBuilt_Should_Run()
         {
-            var ann = A.Create(_layers, _inputs).Build();
+            var activatorFinal = new SigmoidActivator();
+
+            var inputsSize = 2;
+            var inputs = V.DenseOfArray(new double[] { 0.1, 0.9 });
+
+            var firstLayerSize = 3;
+            var secondLayerSize = 4;
+            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activator);
+            var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
+
+            var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
+
+            var ann = A.Create(layers, inputs).Build();
+
             Action act = () => { var _ = ann.Outputs; };
 
             act.Should().NotThrow<InvalidOperationException>();
