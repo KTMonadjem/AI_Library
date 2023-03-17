@@ -11,6 +11,8 @@ namespace ANN.Structure.Layer
         public List<Neuron> Neurons { get; }
         public Matrix<double> Weights { get; private set; } 
         public IActivationFunction Activator { get; }
+        public bool IsBuilt { get; private set; } = false;
+        public bool HasInputs { get; private set; } = false;
 
         private Layer(Matrix<double> weights, IActivationFunction activator)
         {
@@ -89,6 +91,7 @@ namespace ANN.Structure.Layer
                 Neurons.Add(Neuron.Create(weights, bias, Activator.Activate));
             }
 
+            IsBuilt = true;
             return this;
         }
 
@@ -99,17 +102,17 @@ namespace ANN.Structure.Layer
         /// <returns></returns>
         public Layer AddInputs(Vector<double> inputs)
         {
-            if (inputs.Count != Neurons.Count)
+            if (!inputs.Any())
             {
-                throw new ArgumentException("Must have the same number of inputs as neurons");
+                throw new ArgumentException("Must have at least one input");
             }
 
-            for (var i = 0; i < inputs.Count; i++)
+            foreach (var neuron in Neurons)
             {
-                var input = Vector<double>.Build.DenseOfArray(new double[] { inputs[i] });
-                Neurons[i].SetInputs(input);
+                neuron.SetInputs(inputs);
             }
 
+            HasInputs = true;
             return this;
         }
 
@@ -131,6 +134,7 @@ namespace ANN.Structure.Layer
                 neuron.SetParents(parents);
             }
 
+            HasInputs = true;
             return this;
         }
 
@@ -142,6 +146,15 @@ namespace ANN.Structure.Layer
         public Layer AddParentLayer(Layer layer)
         {
             return AddParents(layer.Neurons);
+        }
+
+        /// <summary>
+        /// Deep copy this layer
+        /// </summary>
+        /// <returns></returns>
+        public Layer Clone()
+        {
+            return Create(Weights.Clone(), Activator);
         }
     }
 }

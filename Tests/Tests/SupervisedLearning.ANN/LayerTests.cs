@@ -121,12 +121,12 @@ namespace Tests.SupervisedLearning.ANN
         };
 
         [Test]
-        public void AddInputs_Should_ThrowException_When_InputsAndNeuronsDoNotMatch()
+        public void AddInputs_Should_ThrowException_When_NoInputsProvided()
         {
             var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
             Action act = () => layer.AddInputs(V.DenseOfArray(new double[] { }));
 
-            act.Should().Throw<ArgumentException>().WithMessage("Must have the same number of inputs as neurons");
+            act.Should().Throw<ArgumentException>().WithMessage("Must have at least one input");
         }
 
         [Test]
@@ -137,14 +137,13 @@ namespace Tests.SupervisedLearning.ANN
             {
                 inputs[i] = i;
             }
-            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, 1, _minWeight, _maxWeight, _activator)
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfNeurons, _minWeight, _maxWeight, _activator)
                 .BuildWeights()
                 .AddInputs(V.DenseOfArray(inputs));
 
-            for (var i = 0; i < layer.Neurons.Count; i++)
+            foreach (var neuron in layer.Neurons)
             {
-                layer.Neurons[i].Inputs.Should().HaveCount(1);
-                layer.Neurons[i].Inputs![0].Should().Be(inputs[i]);
+                neuron.Inputs!.Should().BeEquivalentTo(inputs);
             }
         }
 
@@ -190,6 +189,19 @@ namespace Tests.SupervisedLearning.ANN
             {
                 neuron.Parents.Should().BeEquivalentTo(parents.Neurons);
             }
+        }
+
+        [Test]
+        public void Clone_Should_CloneTheLayer()
+        {
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
+            var clone = layer.Clone();
+
+            clone.Weights.Should().BeEquivalentTo(layer.Weights);
+            clone.Activator.Should().BeEquivalentTo(layer.Activator);
+            clone.Neurons.Should().BeEmpty();
+            clone.IsBuilt.Should().BeFalse();
+            clone.HasInputs.Should().BeFalse();
         }
     }
 }

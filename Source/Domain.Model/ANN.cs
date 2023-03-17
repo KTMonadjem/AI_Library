@@ -64,6 +64,11 @@ namespace ANN
             Inputs = inputs;
         }
 
+        /// <summary>
+        /// Build the ANN graph from the weights and inputs
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public ANN Build()
         {
             if (!Layers.Any())
@@ -75,10 +80,38 @@ namespace ANN
                 throw new InvalidOperationException("ANN must have inputs to build");
             }
 
+            Layer? previous = null;
+            foreach (var layer in Layers)
+            {
+                if (!layer.IsBuilt)
+                {
+                    layer.BuildWeights();
+                }
+                if (!layer.HasInputs)
+                {
+                    if (previous is null)
+                    {
+                        // If this is the first layer, use inputs instead of parents
+                        layer.AddInputs(Inputs);
+                    }
+                    else
+                    {
+                        // Otherwise add parents to the current layer's inputs
+                        layer.AddParentLayer(previous);
+                    }
+                }
+
+                previous = layer;
+            }
+
             _hasBeenBuilt = true;
             return this;
         }
 
+        /// <summary>
+        /// Run the inputs through this ANN into the output
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public void Run()
         {
             if (!_hasBeenBuilt)
