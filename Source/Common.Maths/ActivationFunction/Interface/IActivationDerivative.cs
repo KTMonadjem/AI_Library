@@ -8,6 +8,6 @@ namespace Common.Maths.ActivationFunction.Interface
 {
     public interface IActivationDerivative
     {
-        public abstract double Evaluate(double x);
+        public abstract double Derive(double x);
     }
 }

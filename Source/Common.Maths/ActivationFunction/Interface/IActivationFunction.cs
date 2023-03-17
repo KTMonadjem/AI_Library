@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Maths.ActivationFunction.Interface
 {
-    public interface IActivationFunction
+    public interface IActivationFunction: IActivationDerivative
     {
         public abstract double Activate(double input);
     }

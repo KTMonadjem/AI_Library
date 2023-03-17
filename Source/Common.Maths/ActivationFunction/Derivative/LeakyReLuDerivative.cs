@@ -16,7 +16,13 @@ namespace Common.Maths.ActivationFunction.Derivative
             _leak = leak;
         }
 
-        public double Evaluate(double x)
+        /// <summary>
+        /// y' = 1 if x >= 0
+        /// y' = Leak if x < 0
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public double Derive(double x)
         {
             return x >= 0 ? 1 : _leak;
         }

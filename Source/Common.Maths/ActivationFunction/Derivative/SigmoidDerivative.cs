@@ -1,17 +1,19 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
+using MathNet.Numerics;
 
 namespace Common.Maths.ActivationFunction.Derivative
 {
-    public class LinearDerivative: IActivationDerivative
+    public class SigmoidDerivative: IActivationDerivative
     {
         /// <summary>
-        /// y' = 1
+        /// y' = sigmoid(x) * (1 - sigmoid(x))
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public double Derive(double x) 
+        public double Derive(double x)
         {
-            return 1;
+            var log = SpecialFunctions.Logistic(x);
+            return log * (1 - log);
         }
     }
 }

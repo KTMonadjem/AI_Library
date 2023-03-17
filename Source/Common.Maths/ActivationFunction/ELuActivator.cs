@@ -1,29 +1,15 @@
-﻿using Common.Maths.ActivationFunction.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.Maths.ActivationFunction.Derivative;
+using Common.Maths.ActivationFunction.Interface;
 
 namespace Common.Maths.ActivationFunction
 {
-    public class ELuActivator: IActivationFunction
+    public class ELuActivator: ELuDerivative, IActivationFunction
     {
-        private readonly double _alpha;
-
-        public ELuActivator(double alpha)
-        {
-            if (alpha < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(alpha));
-            }
-
-            _alpha = alpha;
-        }
-
-        public double Activate(double input)
-        {
-            return input > 0 ? input : _alpha * (Math.Pow(Math.E, input) - 1);
-        }
+        /// <summary>
+        /// Create an ELu activator with Alpha 
+        /// </summary>
+        /// <param name="alpha">A constant to multiply the exp by</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public ELuActivator(double alpha): base(alpha) {}
     }
 }

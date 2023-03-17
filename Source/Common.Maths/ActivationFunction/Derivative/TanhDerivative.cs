@@ -1,17 +1,19 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
+using MathNet.Numerics;
 
 namespace Common.Maths.ActivationFunction.Derivative
 {
-    public class LinearDerivative: IActivationDerivative
+    public class TanhDerivative: IActivationDerivative
     {
         /// <summary>
-        /// y' = 1
+        /// y' = 1 - tanh^2(x)
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public double Derive(double x) 
+        public double Derive(double x)
         {
-            return 1;
+            var tanh = Trig.Tanh(x);
+            return 1 - Math.Pow(tanh, 2);
         }
     }
 }

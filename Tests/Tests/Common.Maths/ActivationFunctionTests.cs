@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Tests.Common.Maths
 {
     [TestFixture]
-    internal class ActivatorTests
+    public class ActivatorTests
     {
         [TestCase(0, 0)]
         [TestCase(-1, 0)]
