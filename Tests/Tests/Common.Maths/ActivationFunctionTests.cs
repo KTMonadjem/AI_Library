@@ -1,7 +1,10 @@
 ﻿using Common.Maths.ActivationFunction;
+using Common.Maths.ActivationFunction.Helper;
+using Common.Maths.ActivationFunction.Interface;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -131,6 +134,20 @@ namespace Tests.Common.Maths
             forward.Should().BeApproximately(output, 0.00000001);
             var backward = activator.Derive(input);
             backward.Should().Be(activator.Delta);
+        }
+
+        [Test]
+        public void ActivationMapper_Should_ThrowError_When_InvalidActivationFunction()
+        {
+            Action act = () => ActivationFunctionMapper.MapActivationFunction((IActivationFunction.ActivationFunction)99);
+
+            act.Should().Throw<InvalidEnumArgumentException>();
+        }
+
+        [TestCase(0.0)]
+        public void ActivationMapper_Should_MapActivationFunction(double? ctorParam)
+        {
+
         }
     }
 }

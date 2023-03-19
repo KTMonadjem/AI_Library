@@ -27,8 +27,8 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [SetUp]
         public void Setup()
         {
-            var parent1 = Neuron.CreateWithInputs(_parent1Inputs, _parent1Weights, Bias, _activator.Activate);
-            var parent2 = Neuron.CreateWithInputs(_parent2Inputs, _parent2Weights, Bias, _activator.Activate);
+            var parent1 = Neuron.CreateWithInputs(_parent1Inputs, _parent1Weights, Bias, _activator);
+            var parent2 = Neuron.CreateWithInputs(_parent2Inputs, _parent2Weights, Bias, _activator);
             _parents = new List<Neuron>
             {
                 parent1, 
@@ -39,29 +39,29 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void Create_Should_CreateWithCorrectValues()
         {
-            var neuron = Neuron.Create(_weights, Bias, _activator.Activate);
+            var neuron = Neuron.Create(_weights, Bias, _activator);
             neuron.Inputs.Should().BeNull();
             neuron.Parents.Should().BeNull();
             neuron.Weights.Should().BeEquivalentTo(_weights);
             neuron.Bias.Should().Be(Bias);
-            neuron.Activator.Should().BeEquivalentTo(_activator.Activate);
+            neuron.Activator.Should().BeEquivalentTo(_activator);
         }
 
         [Test]
         public void CreateWithInputs_Should_CreateWithCorrectValues_When_InputsAreValid()
         {
-            var neuron = Neuron.CreateWithInputs(_inputs, _weights, Bias, _activator.Activate);
+            var neuron = Neuron.CreateWithInputs(_inputs, _weights, Bias, _activator);
             neuron.Inputs.Should().BeEquivalentTo(_inputs);
             neuron.Parents.Should().BeNull();
             neuron.Weights.Should().BeEquivalentTo(_weights);
             neuron.Bias.Should().Be(Bias);
-            neuron.Activator.Should().BeEquivalentTo(_activator.Activate);
+            neuron.Activator.Should().BeEquivalentTo(_activator);
         }
 
         [Test]
         public void CreateWithInputs_Should_ThrowException_When_InputsAreInvalid()
         {
-            Action act = () => Neuron.CreateWithInputs(_inputs, _weights.SubVector(1, _weights.Count - 1), Bias, _activator.Activate);
+            Action act = () => Neuron.CreateWithInputs(_inputs, _weights.SubVector(1, _weights.Count - 1), Bias, _activator);
 
             act.Should().Throw<ArgumentException>().WithMessage("Neuron inputs and weights must be the same length");
         }
@@ -70,19 +70,19 @@ namespace Tests.Supervised.Learning.ANN.Structure
         public void CreateWithParents_Should_CreateWithCorrectValues_When_InputsAreValid()
         {
             var weights = _weights.SubVector(0, _parents.Count);
-            var neuron = Neuron.CreateWithParents(_parents, weights, Bias, _activator.Activate);
+            var neuron = Neuron.CreateWithParents(_parents, weights, Bias, _activator);
 
             neuron.Inputs.Should().BeNull();
             neuron.Parents.Should().BeEquivalentTo(_parents);
             neuron.Weights.Should().BeEquivalentTo(weights);
             neuron.Bias.Should().Be(Bias);
-            neuron.Activator.Should().BeEquivalentTo(_activator.Activate);
+            neuron.Activator.Should().BeEquivalentTo(_activator);
         }
 
         [Test]
         public void CreateWithParents_Should_ThrowException_When_ParentsAreInvalid()
         {
-            Action act = () => Neuron.CreateWithParents(_parents, _weights.SubVector(1, _weights.Count - 1), Bias, _activator.Activate);
+            Action act = () => Neuron.CreateWithParents(_parents, _weights.SubVector(1, _weights.Count - 1), Bias, _activator);
 
             act.Should().Throw<ArgumentException>().WithMessage("Neuron parents and weights must be the same length");
         }
@@ -90,7 +90,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void SetParents_Should_CorrectlySetParents_When_ArgumentsAreValid()
         {
-            var neuron = Neuron.Create(_weights.SubVector(0, _parents.Count), Bias, _activator.Activate);
+            var neuron = Neuron.Create(_weights.SubVector(0, _parents.Count), Bias, _activator);
             neuron.SetParents(_parents);
             neuron.Inputs.Should().BeNull();
             neuron.Parents.Should().BeEquivalentTo(_parents);
@@ -99,7 +99,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void SetParents_Should_ThrowException_When_InputsAreSet()
         {
-            var neuron = Neuron.CreateWithInputs(_inputs, _weights, Bias, _activator.Activate);
+            var neuron = Neuron.CreateWithInputs(_inputs, _weights, Bias, _activator);
 
             Action act = () => neuron.SetParents(_parents);
 
@@ -109,7 +109,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void SetParents_Should_ThrowException_When_ParentsAndWeightsAreNotTheSameLength()
         {
-            var neuron = Neuron.Create(_weights, Bias, _activator.Activate);
+            var neuron = Neuron.Create(_weights, Bias, _activator);
 
             Action act = () => neuron.SetParents(_parents);
 
@@ -119,7 +119,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void SetInputs_Should_CorrectlySetInputs_When_ArgumentsAreValid()
         {
-            var neuron = Neuron.Create(_weights, Bias, _activator.Activate);
+            var neuron = Neuron.Create(_weights, Bias, _activator);
             neuron.SetInputs(_inputs);
             neuron.Inputs.Should().BeEquivalentTo(_inputs);
             neuron.Parents.Should().BeNull();
@@ -128,7 +128,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void SetInputs_Should_ThrowException_When_ParentsAreSet()
         {
-            var neuron = Neuron.CreateWithParents(_parents, _weights.SubVector(0, _parents.Count), Bias, _activator.Activate);
+            var neuron = Neuron.CreateWithParents(_parents, _weights.SubVector(0, _parents.Count), Bias, _activator);
 
             Action act = () => neuron.SetInputs(_inputs);
 
@@ -138,7 +138,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void SetInputs_Should_ThrowException_When_InputsAndWeightsAreNotTheSameLength()
         {
-            var neuron = Neuron.Create(_weights.SubVector(1, _weights.Count - 1), Bias, _activator.Activate);
+            var neuron = Neuron.Create(_weights.SubVector(1, _weights.Count - 1), Bias, _activator);
 
             Action act = () => neuron.SetInputs(_inputs);
 
@@ -148,7 +148,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void NeuronWithInputs_Should_ActivateCorrectly()
         {
-            var neuron = Neuron.CreateWithInputs(_inputs, _weights, Bias, _activator.Activate);
+            var neuron = Neuron.CreateWithInputs(_inputs, _weights, Bias, _activator);
             var output = neuron.Output;
 
             var expected = Bias;
@@ -165,7 +165,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         public void NeuronWithParents_Should_ActivateCorrectly()
         {
             var weights = _weights.SubVector(0, _parents.Count);
-            var neuron = Neuron.CreateWithParents(_parents, weights, Bias, _activator.Activate);
+            var neuron = Neuron.CreateWithParents(_parents, weights, Bias, _activator);
             var output = neuron.Output;
 
             var expected = Bias;
@@ -181,7 +181,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void NeuronWithoutParentsOrInput_Should_NotActivate()
         {
-            var neuron = Neuron.Create(_weights, Bias, _activator.Activate);
+            var neuron = Neuron.Create(_weights, Bias, _activator);
             Action act = () => { var _ = neuron.Output; };
 
             act.Should().Throw<ArgumentNullException>();

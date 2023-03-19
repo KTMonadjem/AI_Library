@@ -4,6 +4,7 @@ using Common.Maths.ActivationFunction;
 using FluentAssertions;
 using MathNet.Numerics.LinearAlgebra;
 using A = Learning.Supervised.ANN.ANN;
+using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
 namespace Tests.Supervised.Learning.ANN
 {
@@ -24,14 +25,15 @@ namespace Tests.Supervised.Learning.ANN
         private List<Layer> _layers;
         private Vector<double> _inputs;
         private static readonly IActivationFunction _activator = new LinearActivator();
+        private static readonly ActivationFunction _activationFunction = ActivationFunction.Linear;
 
         [SetUp]
         public void SetUp()
         {
             _layers = new List<Layer>
             {
-                Layer.Create(_layerMatrix, _activator),
-                Layer.Create(_layerMatrix.Multiply(2), _activator)
+                Layer.Create(_layerMatrix, _activationFunction),
+                Layer.Create(_layerMatrix.Multiply(2), _activationFunction)
             };
             _inputs = V.Dense(_inputsArray);
         }
@@ -102,7 +104,7 @@ namespace Tests.Supervised.Learning.ANN
         [Test]
         public void Build_Should_CreateGraph_When_LayersAreAlreadyBuilt()
         {
-            var activatorFinal = new SigmoidActivator();
+            var activatorFinal = ActivationFunction.Sigmoid;
 
             var inputsSize = 2;
             var inputs = V.DenseOfArray(new double[] { 0.1, 0.9 });
@@ -110,7 +112,7 @@ namespace Tests.Supervised.Learning.ANN
             var firstLayerSize = 3;
             var secondLayerSize = 4;
 
-            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activator)
+            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction)
                 .BuildWeights()
                 .AddInputs(inputs);
 
@@ -129,14 +131,14 @@ namespace Tests.Supervised.Learning.ANN
         [Test]
         public void Build_Should_CreateGraph_When_LayersAreNotBuilt()
         {
-            var activatorFinal = new SigmoidActivator();
+            var activatorFinal = ActivationFunction.Sigmoid;
 
             var inputsSize = 2;
             var inputs = V.DenseOfArray(new double[] { 0.1, 0.9 });
 
             var firstLayerSize = 3;
             var secondLayerSize = 4;
-            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activator);
+            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction);
             var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
 
             var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
@@ -162,14 +164,14 @@ namespace Tests.Supervised.Learning.ANN
         [Test]
         public void ANN_That_HasBeenBuilt_Should_Run()
         {
-            var activatorFinal = new SigmoidActivator();
+            var activatorFinal = ActivationFunction.Sigmoid;
 
             var inputsSize = 2;
             var inputs = V.DenseOfArray(new double[] { 0.1, 0.9 });
 
             var firstLayerSize = 3;
             var secondLayerSize = 4;
-            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activator);
+            var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction);
             var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
 
             var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
@@ -204,8 +206,8 @@ namespace Tests.Supervised.Learning.ANN
                 { 0, 0.5, 1.0 }
             };
 
-            var firstLayer = Layer.Create(M.DenseOfArray(firstLayerWeights), _activator);
-            var secondLayer = Layer.Create(M.DenseOfArray(secondLayerWeights), _activator);
+            var firstLayer = Layer.Create(M.DenseOfArray(firstLayerWeights), _activationFunction);
+            var secondLayer = Layer.Create(M.DenseOfArray(secondLayerWeights), _activationFunction);
 
 
             var layers = new List<Layer> { firstLayer, secondLayer };

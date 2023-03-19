@@ -3,6 +3,7 @@ using Common.Maths.ActivationFunction.Interface;
 using Common.Maths.ActivationFunction;
 using FluentAssertions;
 using MathNet.Numerics.LinearAlgebra;
+using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
 namespace Tests.Supervised.Learning.ANN.Structure
 {
@@ -12,6 +13,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         private static readonly MatrixBuilder<double> M = Matrix<double>.Build;
         private static readonly VectorBuilder<double> V = Vector<double>.Build;
         private static readonly IActivationFunction _activator = new LinearActivator();
+        private static readonly ActivationFunction _activationFunction = ActivationFunction.Linear;
 
         private const int _numberOfNeurons = 10;
         private const int _numberOfWeights = 20;
@@ -22,9 +24,9 @@ namespace Tests.Supervised.Learning.ANN.Structure
         public void Create_Should_CreateCorrectly(double[,] weightInputs, int numberOfNeurons, int numberOfWeights)
         {
             var weightsMatrix = M.DenseOfArray(weightInputs);
-            var layer = Layer.Create(weightsMatrix, _activator);
+            var layer = Layer.Create(weightsMatrix, _activationFunction);
             layer.Weights.Should().BeEquivalentTo(M.DenseOfArray(weightInputs));
-            layer.Activator.Should().BeEquivalentTo(_activator);
+            layer.Activator.Should().Be(_activationFunction);
         }
 
         [TestCase(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight)]
@@ -32,7 +34,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [TestCase(1, 1, 0, 10)]
         public void CreateWithRandomWeights_Should_CreateWithRandomWeightsCorrectly(int numberOfNeurons, int numberOfWeights, double minWeight, double maxWeight)
         {
-            var layer = Layer.CreateWithRandomWeights(numberOfNeurons, numberOfWeights, minWeight, maxWeight, _activator);
+            var layer = Layer.CreateWithRandomWeights(numberOfNeurons, numberOfWeights, minWeight, maxWeight, _activationFunction);
 
             layer.BuildWeights();
             layer.Neurons.Should().HaveCount(numberOfNeurons);
@@ -45,14 +47,14 @@ namespace Tests.Supervised.Learning.ANN.Structure
                     weight.Should().BeInRange(minWeight, maxWeight);
                 }
             }
-            layer.Activator.Should().BeEquivalentTo(_activator);
+            layer.Activator.Should().Be(_activationFunction);
         }
 
         [TestCase(0)]
         [TestCase(-10)]
         public void CreateWithRandomWeights_Should_ThrowException_When_TooFewNeurons(int numberOfNeurons)
         {
-            Action act = () => Layer.CreateWithRandomWeights(numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator);
+            Action act = () => Layer.CreateWithRandomWeights(numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activationFunction);
 
             act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with neurons");
         }
@@ -61,7 +63,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [TestCase(-10)]
         public void CreateWithRandomWeights_Should_ThrowException_When_TooFewWeights(int numberOfWeights)
         {
-            Action act = () => Layer.CreateWithRandomWeights(_numberOfNeurons, numberOfWeights, _minWeight, _maxWeight, _activator);
+            Action act = () => Layer.CreateWithRandomWeights(_numberOfNeurons, numberOfWeights, _minWeight, _maxWeight, _activationFunction);
 
             act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
         }
@@ -70,7 +72,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [TestCase(0.1, -0.1)]
         public void CreateWithRandomWeights_Should_ThrowException_When_MinWeightLessThanMaxWeight(double minWeight, double maxWeight)
         {
-            Action act = () => Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, minWeight, maxWeight, _activator);
+            Action act = () => Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, minWeight, maxWeight, _activationFunction);
 
             act.Should().Throw<ArgumentException>().WithMessage("Min weight must be less than max weight");
         }
@@ -79,7 +81,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         public void BuildWeights_Should_CorrectlyBuildNeuronWeights(double[,] weightInputs, int numberOfNeurons, int numberOfWeights)
         {
             var weightsMatrix = M.DenseOfArray(weightInputs);
-            var layer = Layer.Create(weightsMatrix, _activator).BuildWeights();
+            var layer = Layer.Create(weightsMatrix, _activationFunction).BuildWeights();
 
             layer.Neurons.Should().HaveCount(numberOfNeurons);
             var weights = weightInputs.Cast<double>().ToList();
@@ -88,7 +90,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
                 var neuronWeights = weights.GetRange(i * numberOfWeights, numberOfWeights);
                 layer.Neurons[i].Weights.Should().BeEquivalentTo(neuronWeights.GetRange(1, neuronWeights.Count - 1));
                 layer.Neurons[i].Bias.Should().Be(neuronWeights[0]);
-                layer.Neurons[i].Activator.Should().Be(_activator.Activate);
+                layer.Neurons[i].Activator.Should().BeEquivalentTo(_activator);
                 layer.Neurons[i].Parents.Should().BeNull();
                 layer.Neurons[i].Inputs.Should().BeNull();
             }
@@ -97,7 +99,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void Create_Should_ThrowException_When_WeightsAreEmpty()
         {
-            Action act = () => Layer.Create(M.DenseOfArray(new double[,] { }), _activator);
+            Action act = () => Layer.Create(M.DenseOfArray(new double[,] { }), _activationFunction);
 
             act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
         }
@@ -122,7 +124,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void AddInputs_Should_ThrowException_When_NoInputsProvided()
         {
-            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activationFunction).BuildWeights();
             Action act = () => layer.AddInputs(V.DenseOfArray(new double[] { }));
 
             act.Should().Throw<ArgumentException>().WithMessage("Must have at least one input");
@@ -136,7 +138,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
             {
                 inputs[i] = i;
             }
-            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfNeurons, _minWeight, _maxWeight, _activator)
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfNeurons, _minWeight, _maxWeight, _activationFunction)
                 .BuildWeights()
                 .AddInputs(V.DenseOfArray(inputs));
 
@@ -149,7 +151,7 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void AddParents_Should_ThrowException_When_NoParentsProvided()
         {
-            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activationFunction).BuildWeights();
             Action act = () => layer.AddParents(Array.Empty<Neuron>().ToList());
 
             act.Should().Throw<ArgumentException>().WithMessage("Parents must be provided to add parents to this layer");
@@ -161,10 +163,10 @@ namespace Tests.Supervised.Learning.ANN.Structure
             var weights = Vector<double>.Build.Dense(new double[] { });
             var parents = new List<Neuron>
             {
-                Neuron.Create(weights, 0, _activator.Activate),
-                Neuron.Create(weights.Multiply(2), 0, _activator.Activate)
+                Neuron.Create(weights, 0, _activator),
+                Neuron.Create(weights.Multiply(2), 0, _activator)
             };
-            var layer = Layer.CreateWithRandomWeights(parents.Count, parents.Count, 0, 1, _activator)
+            var layer = Layer.CreateWithRandomWeights(parents.Count, parents.Count, 0, 1, _activationFunction)
                 .BuildWeights()
                 .AddParents(parents);
 
@@ -178,9 +180,9 @@ namespace Tests.Supervised.Learning.ANN.Structure
         public void AddParentLayer_Should_Succeed_When_ValidParents()
         {
             var parentCount = 2;
-            var parents = Layer.CreateWithRandomWeights(parentCount, parentCount, 0, 1, _activator)
+            var parents = Layer.CreateWithRandomWeights(parentCount, parentCount, 0, 1, _activationFunction)
                 .BuildWeights();
-            var layer = Layer.CreateWithRandomWeights(parentCount, parentCount, 0, 1, _activator)
+            var layer = Layer.CreateWithRandomWeights(parentCount, parentCount, 0, 1, _activationFunction)
                 .BuildWeights()
                 .AddParentLayer(parents);
 
@@ -193,11 +195,11 @@ namespace Tests.Supervised.Learning.ANN.Structure
         [Test]
         public void Clone_Should_CloneTheLayer()
         {
-            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activator).BuildWeights();
+            var layer = Layer.CreateWithRandomWeights(_numberOfNeurons, _numberOfWeights, _minWeight, _maxWeight, _activationFunction).BuildWeights();
             var clone = layer.Clone();
 
             clone.Weights.Should().BeEquivalentTo(layer.Weights);
-            clone.Activator.Should().BeEquivalentTo(layer.Activator);
+            clone.Activator.Should().Be(layer.Activator);
             clone.Neurons.Should().BeEmpty();
             clone.IsBuilt.Should().BeFalse();
             clone.HasInputs.Should().BeFalse();

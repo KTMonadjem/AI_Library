@@ -1,32 +1,37 @@
-﻿using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Helper;
+using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
+using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
 namespace Learning.Supervised.ANN.Structure
 {
     public class Layer
     {
         private static readonly Random _random = new Random();
+        private readonly double? _alpha;
 
         public List<Neuron> Neurons { get; }
         public Matrix<double> Weights { get; private set; } 
-        public IActivationFunction Activator { get; }
+        public ActivationFunction Activator { get; }
         public bool IsBuilt { get; private set; } = false;
         public bool HasInputs { get; private set; } = false;
 
-        private Layer(Matrix<double> weights, IActivationFunction activator)
+        private Layer(Matrix<double> weights, ActivationFunction activator, double? alpha = null)
         {
             Neurons = new List<Neuron>();
             Weights = weights;
+
+            _alpha = alpha;
             Activator = activator;
         }
 
-        public static Layer Create(Matrix<double> weights, IActivationFunction activator) 
+        public static Layer Create(Matrix<double> weights, ActivationFunction activator, double? alpha = null) 
         { 
             if (weights.ColumnCount <= 0 && weights.RowCount <= 0)
             {
                 throw new ArgumentException("Layer must be created with weights");
             }
-            return new Layer(weights, activator); 
+            return new Layer(weights, activator, alpha); 
         }
 
         /// <summary>
@@ -39,7 +44,13 @@ namespace Learning.Supervised.ANN.Structure
         /// <param name="activator"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Layer CreateWithRandomWeights(int numberOfNeurons, int numberOfWeights, double minWeight, double maxWeight, IActivationFunction activator)
+        public static Layer CreateWithRandomWeights(
+            int numberOfNeurons, 
+            int numberOfWeights, 
+            double minWeight, 
+            double maxWeight, 
+            ActivationFunction activator, 
+            double? alpha = null)
         {
             if (numberOfNeurons <= 0)
             {
@@ -68,7 +79,7 @@ namespace Learning.Supervised.ANN.Structure
                 }
             }
 
-            return Create(Matrix<double>.Build.DenseOfArray(weights), activator);
+            return Create(Matrix<double>.Build.DenseOfArray(weights), activator, alpha);
         }
 
         /// <summary>
@@ -87,7 +98,9 @@ namespace Learning.Supervised.ANN.Structure
 
                 var bias = weights[0];
                 weights = weights.SubVector(1, weights.Count - 1);
-                Neurons.Add(Neuron.Create(weights, bias, Activator.Activate));
+
+                var activationFunction = ActivationFunctionMapper.MapActivationFunction(Activator, _alpha);
+                Neurons.Add(Neuron.Create(weights, bias, activationFunction));
             }
 
             IsBuilt = true;
@@ -153,7 +166,7 @@ namespace Learning.Supervised.ANN.Structure
         /// <returns></returns>
         public Layer Clone()
         {
-            return Create(Weights.Clone(), Activator);
+            return Create(Weights.Clone(), Activator, _alpha);
         }
     }
 }

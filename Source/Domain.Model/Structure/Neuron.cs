@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.Distributions;
+﻿using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace Learning.Supervised.ANN.Structure
@@ -22,10 +22,10 @@ namespace Learning.Supervised.ANN.Structure
         public double Bias { get; }
         public Vector<double>? Inputs { get; private set; }
         public Vector<double> Weights { get; }
-        public Func<double, double> Activator { get; }
+        public IActivationFunction Activator { get; }
         public List<Neuron>? Parents { get; private set; }
 
-        private Neuron(Vector<double>? inputs, List<Neuron>? parents, Vector<double> weights, double bias, Func<double, double> activator)
+        private Neuron(Vector<double>? inputs, List<Neuron>? parents, Vector<double> weights, double bias, IActivationFunction activator)
         {
             Inputs = inputs;
             Parents = parents;
@@ -34,12 +34,12 @@ namespace Learning.Supervised.ANN.Structure
             Activator = activator;
         }
 
-        public static Neuron Create(Vector<double> weights, double bias, Func<double, double> activator)
+        public static Neuron Create(Vector<double> weights, double bias, IActivationFunction activator)
         {
             return new Neuron(null, null, weights, bias, activator);
         }
 
-        public static Neuron CreateWithParents(List<Neuron> parents, Vector<double> weights, double bias, Func<double, double> activator)
+        public static Neuron CreateWithParents(List<Neuron> parents, Vector<double> weights, double bias, IActivationFunction activator)
         {
             if (parents.Count != weights.Count)
             {
@@ -49,7 +49,7 @@ namespace Learning.Supervised.ANN.Structure
             return new Neuron(null, parents, weights, bias, activator);
         }
 
-        public static Neuron CreateWithInputs(Vector<double> inputs, Vector<double> weights, double bias, Func<double, double> activator)
+        public static Neuron CreateWithInputs(Vector<double> inputs, Vector<double> weights, double bias, IActivationFunction activator)
         {
             if (inputs.Count != weights.Count)
             {
@@ -135,7 +135,7 @@ namespace Learning.Supervised.ANN.Structure
         private void Activate()
         {
             _hasActivated = true;
-            _output = Activator(SumInputs());
+            _output = Activator.Activate(SumInputs());
         }
     }
 }
