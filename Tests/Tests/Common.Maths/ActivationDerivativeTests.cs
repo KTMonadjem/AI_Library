@@ -57,9 +57,10 @@ namespace Tests.Common.Maths
         [TestCase(-0.1)]
         public void SigmoidDerivative_Should_ReturnCorrectValues(double x)
         {
-            var sigmoid = new SigmoidActivator().Activate(x);
+            var activator = new SigmoidActivator();
+            var sigmoid = activator.Activate(x);
 
-            var result = new SigmoidDerivative().Derive(x);
+            var result = activator.Derive(x);
             result.Should().Be(sigmoid * (1 - sigmoid));
         }
 
@@ -98,9 +99,10 @@ namespace Tests.Common.Maths
         [TestCase(-0.1)]
         public void TanhDerivative_Should_ReturnCorrectValues(double x)
         {
-            var tanh = new TanhActivator().Activate(x);
+            var activator = new TanhActivator();
+            var tanh = activator.Activate(x);
 
-            var result = new TanhDerivative().Derive(x);
+            var result = activator.Derive(x);
             result.Should().Be(1 - Math.Pow(tanh, 2));
         }
 
@@ -109,10 +111,12 @@ namespace Tests.Common.Maths
         [TestCase(-0.1)]
         public void SwishDerivative_Should_ReturnCorrectValues(double x)
         {
-            var swish = new SwishActivator().Activate(x);
+            var activator = new SwishActivator();
             var sigmoid = new SigmoidActivator().Activate(x);
 
-            var result = new SwishDerivative().Derive(x);
+            var swish = activator.Activate(x);
+
+            var result = activator.Derive(x);
             result.Should().Be(swish + sigmoid * (1 - swish));
         }
     }
