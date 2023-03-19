@@ -4,7 +4,9 @@ namespace Common.Maths.ActivationFunction.Derivative
 {
     public class ELuDerivative: IActivationDerivative
     {
-        private readonly double _alpha;
+        protected readonly double _alpha;
+
+        protected double Beta; 
 
         /// <summary>
         /// Create a new ELu Derivative with alpha (from the activator)
@@ -29,18 +31,7 @@ namespace Common.Maths.ActivationFunction.Derivative
         /// <returns></returns>
         public double Derive(double x)
         {
-            return x >= 0 ? 1 : Activate(x) + _alpha;
-        }
-
-        /// <summary>
-        /// y = x if x > 0
-        /// y = Alpha * (e^x - 1)
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public double Activate(double input)
-        {
-            return input > 0 ? input : _alpha * (Math.Pow(Math.E, input) - 1);
+            return x >= 0 ? 1 : Beta + _alpha;
         }
     }
 }

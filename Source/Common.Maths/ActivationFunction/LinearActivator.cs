@@ -10,6 +10,8 @@ namespace Common.Maths.ActivationFunction
 {
     public class LinearActivator: LinearDerivative, IActivationFunction
     {
+        public double Delta { get; set; }
+
         /// <summary>
         /// y = x
         /// </summary>
@@ -17,6 +19,7 @@ namespace Common.Maths.ActivationFunction
         /// <returns></returns>
         public double Activate(double input)
         {
+            Delta = Derive(input);
             return input;
         }
     }

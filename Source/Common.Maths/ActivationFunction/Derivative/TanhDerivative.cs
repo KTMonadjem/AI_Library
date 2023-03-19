@@ -5,6 +5,8 @@ namespace Common.Maths.ActivationFunction.Derivative
 {
     public class TanhDerivative: IActivationDerivative
     {
+        protected double Tanh;
+
         /// <summary>
         /// y' = 1 - tanh^2(x)
         /// </summary>
@@ -12,8 +14,7 @@ namespace Common.Maths.ActivationFunction.Derivative
         /// <returns></returns>
         public double Derive(double x)
         {
-            var tanh = Trig.Tanh(x);
-            return 1 - Math.Pow(tanh, 2);
+            return 1 - Math.Pow(Tanh, 2);
         }
     }
 }

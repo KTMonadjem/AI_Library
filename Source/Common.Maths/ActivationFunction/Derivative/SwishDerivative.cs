@@ -5,6 +5,9 @@ namespace Common.Maths.ActivationFunction.Derivative
 {
     public class SwishDerivative: IActivationDerivative
     {
+        protected double SigmoidX;
+        protected double SwishX;
+
         /// <summary>
         /// y' = x * sigmoid(x) + sigmoid(x)(1 - x * sigmoid(x))
         /// </summary>
@@ -12,8 +15,7 @@ namespace Common.Maths.ActivationFunction.Derivative
         /// <returns></returns>
         public double Derive(double x)
         {
-            var sigmoid = SpecialFunctions.Logistic(x);
-            return x * sigmoid + sigmoid * (1 - x * sigmoid);
+            return SwishX + SigmoidX * (1 - SwishX);
         }
     }
 }

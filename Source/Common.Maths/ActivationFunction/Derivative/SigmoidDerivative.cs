@@ -5,6 +5,8 @@ namespace Common.Maths.ActivationFunction.Derivative
 {
     public class SigmoidDerivative: IActivationDerivative
     {
+        protected double SigmoidX;
+
         /// <summary>
         /// y' = sigmoid(x) * (1 - sigmoid(x))
         /// </summary>
@@ -12,7 +14,7 @@ namespace Common.Maths.ActivationFunction.Derivative
         /// <returns></returns>
         public double Derive(double x)
         {
-            var log = SpecialFunctions.Logistic(x);
+            var log = SigmoidX;
             return log * (1 - log);
         }
     }

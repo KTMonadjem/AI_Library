@@ -6,6 +6,8 @@ namespace Common.Maths.ActivationFunction
 {
     public class SigmoidActivator: SigmoidDerivative, IActivationFunction
     {
+        public double Delta { get; set; }
+
         /// <summary>
         /// y = sigmoid(x)
         /// </summary>
@@ -13,7 +15,9 @@ namespace Common.Maths.ActivationFunction
         /// <returns></returns>
         public double Activate(double input)
         {
-            return SpecialFunctions.Logistic(input);
+            SigmoidX = SpecialFunctions.Logistic(input);
+            Delta = Derive(input);
+            return SigmoidX;
         }
     }
 }

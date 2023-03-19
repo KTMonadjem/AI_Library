@@ -6,6 +6,8 @@ namespace Common.Maths.ActivationFunction
 {
     public class TanhActivator : TanhDerivative, IActivationFunction
     {
+        public double Delta { get; set; }
+
         /// <summary>
         /// y = tanh(x)
         /// </summary>
@@ -13,7 +15,9 @@ namespace Common.Maths.ActivationFunction
         /// <returns></returns>
         public double Activate(double input)
         {
-            return Trig.Tanh(input);
+            Tanh = Trig.Tanh(input);
+            Delta = Derive(input);
+            return Tanh;
         }
     }
 }

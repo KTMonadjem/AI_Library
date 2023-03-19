@@ -12,6 +12,8 @@ namespace Common.Maths.ActivationFunction
     {
         private readonly double _leak;
 
+        public double Delta { get; set; }
+
         /// <summary>
         /// y = x if x > 0
         /// y = Leak * x if x < 0
@@ -36,6 +38,7 @@ namespace Common.Maths.ActivationFunction
         /// <returns></returns>
         public double Activate(double input)
         {
+            Delta = Derive(input);
             return input > 0 ? input : _leak * input;
         }
     }

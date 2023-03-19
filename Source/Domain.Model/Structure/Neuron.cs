@@ -111,6 +111,22 @@ namespace Learning.Supervised.ANN.Structure
             }
         }
 
+        /// <summary>
+        /// Modify each weight using gradient descent
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        public Neuron ModifyWeights(double error)
+        {
+            // Modify weights
+            foreach (var weight in Weights)
+            {
+
+            }
+
+            // Modify bias
+        }
+
         private double SumInputs()
         {
             return GetInputs().PointwiseMultiply(Weights).Sum() + Bias;

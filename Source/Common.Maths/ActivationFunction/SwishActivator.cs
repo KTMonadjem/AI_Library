@@ -6,6 +6,8 @@ namespace Common.Maths.ActivationFunction
 {
     public class SwishActivator: SwishDerivative, IActivationFunction
     {
+        public double Delta { get; set; }
+
         /// <summary>
         /// y = x * sigmoid(x)
         /// </summary>
@@ -13,7 +15,10 @@ namespace Common.Maths.ActivationFunction
         /// <returns></returns>
         public double Activate(double input)
         {
-            return input * SpecialFunctions.Logistic(input);
+            SigmoidX = SpecialFunctions.Logistic(input);
+            SwishX = input * SigmoidX;
+            Delta = Derive(input);
+            return SwishX;
         }
     }
 }
