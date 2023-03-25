@@ -5,7 +5,7 @@ using Training.Algorithm.Interface;
 
 namespace Learning.Supervised.ANN
 {
-    public class ANN: ISupervisedLearner
+    public class ANN: IANN
     {
         private bool _hasRun = false;
         private bool _inputsModified = true;
@@ -140,6 +140,14 @@ namespace Learning.Supervised.ANN
 
             _hasRun = true;
             _inputsModified = false;
+        }
+
+        /// <summary>
+        /// Trains the ANN using the trainer
+        /// </summary>
+        public void Train()
+        {
+
         }
     }
 }
