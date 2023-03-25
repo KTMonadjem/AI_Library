@@ -1,12 +1,17 @@
-﻿namespace Learning.Supervised.Training.Algorithm
+﻿using Training.Algorithm.Interface;
+
+namespace Learning.Supervised.Training.Algorithm
 {
-    public class GradientDescent
+    public class GradientDescent: ITrainer
     {
         public GradientDescent()
         {
 
         }
 
+        public void Train()
+        {
 
+        }
     }
 }

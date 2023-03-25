@@ -1,16 +1,18 @@
-﻿using Learning.Supervised.ANN.Structure;
+﻿using ANN.Interface;
+using Learning.Supervised.ANN.Structure;
 using MathNet.Numerics.LinearAlgebra;
+using Training.Algorithm.Interface;
 
 namespace Learning.Supervised.ANN
 {
-    public class ANN
+    public class ANN: ISupervisedLearner
     {
         private bool _hasRun = false;
         private bool _inputsModified = true;
         private bool _hasBeenBuilt = false;
         private Vector<double> _outputs;
 
-
+        public ITrainer Trainer { get; private set; }
         public List<Layer> Layers { get; } = new List<Layer>();
         public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense(Array.Empty<double>());
         public Vector<double> Outputs {
@@ -28,10 +30,11 @@ namespace Learning.Supervised.ANN
         {
         }
 
-        private ANN(List<Layer> layers, Vector<double> inputs)
+        private ANN(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
         {
             SetInputs(inputs);
             AddLayers(layers);
+            Trainer = trainer;
         }
 
         public static ANN Create()
@@ -39,9 +42,9 @@ namespace Learning.Supervised.ANN
             return new ANN();
         }
 
-        public static ANN Create(List<Layer> layers, Vector<double> inputs)
+        public static ANN Create(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
         {
-            return new ANN(layers, inputs);
+            return new ANN(layers, inputs, trainer);
         }
 
         public void AddLayer(Layer layer)
@@ -62,6 +65,11 @@ namespace Learning.Supervised.ANN
         public void SetInputs(Vector<double> inputs)
         {
             Inputs = inputs;
+        }
+
+        public void SetTrainer(ITrainer trainer)
+        {
+            Trainer = trainer;
         }
 
         /// <summary>

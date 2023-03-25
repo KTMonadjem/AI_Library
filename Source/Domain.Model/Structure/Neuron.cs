@@ -116,16 +116,16 @@ namespace Learning.Supervised.ANN.Structure
         /// </summary>
         /// <param name="error"></param>
         /// <returns></returns>
-        //public Neuron ModifyWeights(double error)
-        //{
-        //    // Modify weights
-        //    foreach (var weight in Weights)
-        //    {
+        public Neuron ModifyWeights(double error)
+        {
+            // Modify weights
+            foreach (var weight in Weights)
+            {
 
-        //    }
+            }
 
-        //    // Modify bias
-        //}
+            // Modify bias
+        }
 
         private double SumInputs()
         {
