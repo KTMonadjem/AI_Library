@@ -9,15 +9,15 @@ namespace Training.LearningRate
 {
     public class FlatLearningRate: ILearningRate
     {
-        private readonly double _learningRate;
-        public FlatLearningRate(double learningRate)
+        private readonly double _alpha;
+        public FlatLearningRate(double alpha)
         {
-            _learningRate = learningRate;
+            _alpha = alpha;
         }
 
         public double ApplyLearningRate(double errorSignal)
         {
-            return _learningRate * errorSignal;
+            return _alpha * errorSignal;
         }
     }
 }

@@ -6,7 +6,7 @@ using MathNet.Numerics.LinearAlgebra;
 using A = Learning.Supervised.ANN.ANN;
 using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 using Training.Algorithm.Interface;
-using Learning.Supervised.Training.Algorithm;
+using Learning.Supervised.ANN.Trainer;
 
 namespace Tests.Supervised.Learning.ANN
 {
@@ -26,7 +26,6 @@ namespace Tests.Supervised.Learning.ANN
 
         private List<Layer> _layers;
         private Vector<double> _inputs;
-        private readonly ITrainer _trainer = new GradientDescent();
         private static readonly IActivationFunction _activator = new LinearActivator();
         private static readonly ActivationFunction _activationFunction = ActivationFunction.Linear;
 
@@ -51,10 +50,9 @@ namespace Tests.Supervised.Learning.ANN
         [Test]
         public void CreateWithParams_Should_SuccessfullyCreateANN()
         {
-            var ann = A.Create(_layers, _inputs, _trainer);
+            var ann = A.Create(_layers, _inputs);
             ann.Layers.Should().BeEquivalentTo(_layers);
             ann.Inputs.Should().BeEquivalentTo(_inputs);
-            ann.Trainer.Should().BeEquivalentTo(_trainer);
         }
 
         [Test]
@@ -85,15 +83,6 @@ namespace Tests.Supervised.Learning.ANN
             ann.SetInputs(_inputs);
 
             ann.Inputs.Should().BeEquivalentTo(_inputs);
-        }
-
-        [Test]
-        public void SetInputs_Should_SetTrainer()
-        {
-            var ann = A.Create();
-            ann.SetTrainer(_trainer);
-
-            ann.Trainer.Should().BeEquivalentTo(_trainer);
         }
 
         [Test]
@@ -134,7 +123,7 @@ namespace Tests.Supervised.Learning.ANN
                 .AddParentLayer(firstLayer);
 
             var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
-            var ann = A.Create(layers, inputs, _trainer).Build();
+            var ann = A.Create(layers, inputs).Build();
 
             ann.Inputs.Should().BeEquivalentTo(inputs);
             ann.Layers.Should().HaveCount(2);
@@ -155,7 +144,7 @@ namespace Tests.Supervised.Learning.ANN
             var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
 
             var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
-            var ann = A.Create(layers, inputs, _trainer).Build();
+            var ann = A.Create(layers, inputs).Build();
 
             ann.Inputs.Should().BeEquivalentTo(inputs);
             ann.Layers.Should().HaveCount(2);
@@ -189,7 +178,7 @@ namespace Tests.Supervised.Learning.ANN
 
             var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
 
-            var ann = A.Create(layers, inputs, _trainer).Build();
+            var ann = A.Create(layers, inputs).Build();
 
             Action act = () => { var _ = ann.Outputs; };
 
@@ -224,7 +213,7 @@ namespace Tests.Supervised.Learning.ANN
 
 
             var layers = new List<Layer> { firstLayer, secondLayer };
-            var ann = A.Create(layers, inputs, _trainer).Build();
+            var ann = A.Create(layers, inputs).Build();
 
             var result = ann.Outputs;
 

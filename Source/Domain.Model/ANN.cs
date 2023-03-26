@@ -7,18 +7,17 @@ namespace Learning.Supervised.ANN
 {
     public class ANN: IANN
     {
-        private bool _hasRun = false;
         private bool _inputsModified = true;
-        private bool _hasBeenBuilt = false;
         private Vector<double> _outputs;
 
-        public ITrainer Trainer { get; private set; }
         public List<Layer> Layers { get; } = new List<Layer>();
         public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense(Array.Empty<double>());
+        public bool HasRun { get; private set; }
+        public bool HasBeenBuilt { get; private set; }
         public Vector<double> Outputs {
             get
             {
-                if (!_hasRun)
+                if (!HasRun)
                 {
                     Run();
                 }
@@ -30,11 +29,10 @@ namespace Learning.Supervised.ANN
         {
         }
 
-        private ANN(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
+        private ANN(List<Layer> layers, Vector<double> inputs)
         {
             SetInputs(inputs);
             AddLayers(layers);
-            Trainer = trainer;
         }
 
         public static ANN Create()
@@ -42,14 +40,14 @@ namespace Learning.Supervised.ANN
             return new ANN();
         }
 
-        public static ANN Create(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
+        public static ANN Create(List<Layer> layers, Vector<double> inputs)
         {
-            return new ANN(layers, inputs, trainer);
+            return new ANN(layers, inputs);
         }
 
         public void AddLayer(Layer layer)
         {
-            _hasBeenBuilt = false;
+            HasBeenBuilt = false;
             _inputsModified = true;
             Layers.Add(layer);
         }
@@ -65,11 +63,6 @@ namespace Learning.Supervised.ANN
         public void SetInputs(Vector<double> inputs)
         {
             Inputs = inputs;
-        }
-
-        public void SetTrainer(ITrainer trainer)
-        {
-            Trainer = trainer;
         }
 
         /// <summary>
@@ -112,7 +105,7 @@ namespace Learning.Supervised.ANN
                 previous = layer;
             }
 
-            _hasBeenBuilt = true;
+            HasBeenBuilt = true;
             return this;
         }
 
@@ -122,7 +115,7 @@ namespace Learning.Supervised.ANN
         /// <exception cref="InvalidOperationException"></exception>
         public void Run()
         {
-            if (!_hasBeenBuilt)
+            if (!HasBeenBuilt)
             {
                 throw new InvalidOperationException("ANN must be built before being run");
             }
@@ -138,7 +131,7 @@ namespace Learning.Supervised.ANN
 
             _outputs = Vector<double>.Build.Dense(outputs);
 
-            _hasRun = true;
+            HasRun = true;
             _inputsModified = false;
         }
 
