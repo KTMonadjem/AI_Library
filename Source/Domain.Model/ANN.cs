@@ -1,7 +1,7 @@
 ﻿using ANN.Interface;
 using Learning.Supervised.ANN.Structure;
 using MathNet.Numerics.LinearAlgebra;
-using Training.Algorithm.Interface;
+using Learning.Supervised.Training.Algorithm.Interface;
 
 namespace Learning.Supervised.ANN
 {
@@ -66,7 +66,7 @@ namespace Learning.Supervised.ANN
         }
 
         /// <summary>
-        /// Build the ANN graph from the weights and inputs
+        /// Build the Learning.Supervised.ANN graph from the weights and inputs
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
@@ -74,11 +74,11 @@ namespace Learning.Supervised.ANN
         {
             if (!Layers.Any())
             {
-                throw new InvalidOperationException("ANN must have layers to build");
+                throw new InvalidOperationException("Learning.Supervised.ANN must have layers to build");
             }
             if (!Inputs.Any())
             {
-                throw new InvalidOperationException("ANN must have inputs to build");
+                throw new InvalidOperationException("Learning.Supervised.ANN must have inputs to build");
             }
 
             Layer? previous = null;
@@ -110,14 +110,14 @@ namespace Learning.Supervised.ANN
         }
 
         /// <summary>
-        /// Run the inputs through this ANN into the output
+        /// Run the inputs through this Learning.Supervised.ANN into the output
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
         public void Run()
         {
             if (!HasBeenBuilt)
             {
-                throw new InvalidOperationException("ANN must be built before being run");
+                throw new InvalidOperationException("Learning.Supervised.ANN must be built before being run");
             }
 
             // We only care about the last layers neurons.
@@ -136,7 +136,7 @@ namespace Learning.Supervised.ANN
         }
 
         /// <summary>
-        /// Trains the ANN using the trainer
+        /// Trains the Learning.Supervised.ANN using the trainer
         /// </summary>
         public void Train()
         {

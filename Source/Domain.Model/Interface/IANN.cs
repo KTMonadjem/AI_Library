@@ -1,4 +1,4 @@
-﻿using Training.Algorithm.Interface;
+﻿using Learning.Supervised.Training.Algorithm.Interface;
 
 namespace ANN.Interface
 {
