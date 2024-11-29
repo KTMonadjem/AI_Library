@@ -1,8 +1,8 @@
 ﻿using Learning.Supervised.Training.Algorithm.Interface;
 
-namespace ANN.Interface;
+namespace Learning.Supervised.Ann.Interface;
 
-public interface IANN : ILearner
+public interface IAnn : ILearner
 {
     public void Run();
 }

@@ -1,11 +1,11 @@
 ﻿using Common.Maths.ActivationFunction;
 using Common.Maths.ActivationFunction.Interface;
 using FluentAssertions;
-using Learning.Supervised.ANN.Structure;
+using Learning.Supervised.Ann.Structure;
 using MathNet.Numerics.LinearAlgebra;
 using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
-namespace Tests.Supervised.Learning.ANN.Structure;
+namespace Tests.Supervised.Learning.Ann.Structure;
 
 [TestFixture]
 public class LayerTests

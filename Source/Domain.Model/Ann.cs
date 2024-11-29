@@ -1,26 +1,24 @@
-﻿using ANN.Interface;
-using Learning.Supervised.ANN.Structure;
+﻿using Learning.Supervised.Ann.Interface;
+using Learning.Supervised.Ann.Structure;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Learning.Supervised.ANN;
+namespace Learning.Supervised.Ann;
 
-public class ANN : IANN
+public class Ann : IAnn
 {
     private bool _inputsModified = true;
-    private Vector<double> _outputs;
+    private Vector<double> _outputs = null!;
 
-    private ANN()
-    {
-    }
+    private Ann() { }
 
-    private ANN(List<Layer> layers, Vector<double> inputs)
+    private Ann(List<Layer> layers, Vector<double> inputs)
     {
         SetInputs(inputs);
         AddLayers(layers);
     }
 
     public List<Layer> Layers { get; } = new();
-    public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense(Array.Empty<double>());
+    public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense([]);
     public bool HasRun { get; private set; }
     public bool HasBeenBuilt { get; private set; }
 
@@ -28,19 +26,24 @@ public class ANN : IANN
     {
         get
         {
-            if (!HasRun) Run();
+            if (!HasRun)
+                throw new InvalidOperationException(
+                    "Learning.Supervised.Ann must be run before before outputs can be read"
+                );
             return _outputs;
         }
     }
 
     /// <summary>
-    ///     Run the inputs through this Learning.Supervised.ANN into the output
+    ///     Run the inputs through this Learning.Supervised.Ann into the output
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>
     public void Run()
     {
         if (!HasBeenBuilt)
-            throw new InvalidOperationException("Learning.Supervised.ANN must be built before being run");
+            throw new InvalidOperationException(
+                "Learning.Supervised.Ann must be built before being run"
+            );
 
         // We only care about the last layers neurons.
         var finalLayerCount = Layers.Last().Neurons.Count;
@@ -55,47 +58,58 @@ public class ANN : IANN
         _inputsModified = false;
     }
 
-    public static ANN Create()
+    public static Ann Create()
     {
-        return new ANN();
+        return new Ann();
     }
 
-    public static ANN Create(List<Layer> layers, Vector<double> inputs)
+    public static Ann Create(List<Layer> layers, Vector<double> inputs)
     {
-        return new ANN(layers, inputs);
+        return new Ann(layers, inputs);
     }
 
-    public void AddLayer(Layer layer)
+    public Ann AddLayer(Layer layer)
     {
         HasBeenBuilt = false;
         _inputsModified = true;
         Layers.Add(layer);
+        return this;
     }
 
-    public void AddLayers(List<Layer> layers)
+    public Ann AddLayers(List<Layer> layers)
     {
-        foreach (var layer in layers) AddLayer(layer);
+        foreach (var layer in layers)
+            AddLayer(layer);
+        return this;
     }
 
-    public void SetInputs(Vector<double> inputs)
+    public Ann SetInputs(Vector<double> inputs)
     {
         Inputs = inputs;
+        return this;
     }
 
     /// <summary>
-    ///     Build the Learning.Supervised.ANN graph from the weights and inputs
+    ///     Build the Learning.Supervised.Ann graph from the weights and inputs
     /// </summary>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public ANN Build()
+    public Ann Build()
     {
-        if (!Layers.Any()) throw new InvalidOperationException("Learning.Supervised.ANN must have layers to build");
-        if (!Inputs.Any()) throw new InvalidOperationException("Learning.Supervised.ANN must have inputs to build");
+        if (!Layers.Any())
+            throw new InvalidOperationException(
+                "Learning.Supervised.Ann must have layers to build"
+            );
+        if (!Inputs.Any())
+            throw new InvalidOperationException(
+                "Learning.Supervised.Ann must have inputs to build"
+            );
 
         Layer? previous = null;
         foreach (var layer in Layers)
         {
-            if (!layer.IsBuilt) layer.BuildWeights();
+            if (!layer.IsBuilt)
+                layer.BuildWeights();
             if (!layer.HasInputs)
             {
                 if (previous is null)
@@ -114,9 +128,7 @@ public class ANN : IANN
     }
 
     /// <summary>
-    ///     Trains the Learning.Supervised.ANN using the trainer
+    ///     Trains the Learning.Supervised.Ann using the trainer
     /// </summary>
-    public void Train()
-    {
-    }
+    public void Train() { }
 }

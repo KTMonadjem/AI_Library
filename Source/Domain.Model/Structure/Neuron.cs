@@ -1,7 +1,7 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Learning.Supervised.ANN.Structure;
+namespace Learning.Supervised.Ann.Structure;
 
 public class Neuron
 {

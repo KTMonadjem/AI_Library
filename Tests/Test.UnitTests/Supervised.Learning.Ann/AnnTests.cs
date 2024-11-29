@@ -1,12 +1,11 @@
 ﻿using Common.Maths.ActivationFunction;
 using Common.Maths.ActivationFunction.Interface;
 using FluentAssertions;
-using Learning.Supervised.ANN.Structure;
+using Learning.Supervised.Ann.Structure;
 using MathNet.Numerics.LinearAlgebra;
-using A = Learning.Supervised.ANN.ANN;
 using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
-namespace Tests.Supervised.Learning.ANN;
+namespace Tests.Supervised.Learning.Ann;
 
 [TestFixture]
 public class AnnTests
@@ -40,16 +39,16 @@ public class AnnTests
     private static readonly ActivationFunction _activationFunction = ActivationFunction.Linear;
 
     [Test]
-    public void Create_Should_SuccessfullyCreateANN()
+    public void Create_Should_SuccessfullyCreateAnn()
     {
-        var ann = A.Create();
+        var ann = global::Learning.Supervised.Ann.Ann.Create();
         ann.Layers.Should().BeEmpty();
     }
 
     [Test]
-    public void CreateWithParams_Should_SuccessfullyCreateANN()
+    public void CreateWithParams_Should_SuccessfullyCreateAnn()
     {
-        var ann = A.Create(_layers, _inputs);
+        var ann = global::Learning.Supervised.Ann.Ann.Create(_layers, _inputs);
         ann.Layers.Should().BeEquivalentTo(_layers);
         ann.Inputs.Should().BeEquivalentTo(_inputs);
     }
@@ -57,7 +56,7 @@ public class AnnTests
     [Test]
     public void AddLayer_Should_AddLayer()
     {
-        var ann = A.Create();
+        var ann = global::Learning.Supervised.Ann.Ann.Create();
         foreach (var layer in _layers) ann.AddLayer(layer);
 
         ann.Layers.Should().BeEquivalentTo(_layers);
@@ -66,7 +65,7 @@ public class AnnTests
     [Test]
     public void AddLayers_Should_AddLayers()
     {
-        var ann = A.Create();
+        var ann = global::Learning.Supervised.Ann.Ann.Create();
         ann.AddLayers(_layers);
 
         ann.Layers.Should().BeEquivalentTo(_layers);
@@ -75,7 +74,7 @@ public class AnnTests
     [Test]
     public void SetInputs_Should_SetInputs()
     {
-        var ann = A.Create();
+        var ann = global::Learning.Supervised.Ann.Ann.Create();
         ann.SetInputs(_inputs);
 
         ann.Inputs.Should().BeEquivalentTo(_inputs);
@@ -84,21 +83,21 @@ public class AnnTests
     [Test]
     public void Build_Should_Fail_When_NoLayers()
     {
-        Action act = () => A.Create().Build();
+        Action act = () => global::Learning.Supervised.Ann.Ann.Create().Build();
 
         act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Learning.Supervised.ANN must have layers to build");
+            .WithMessage("Learning.Supervised.Ann must have layers to build");
     }
 
     [Test]
     public void Build_Should_Fail_When_NoInputs()
     {
-        var ann = A.Create();
+        var ann = global::Learning.Supervised.Ann.Ann.Create();
         ann.AddLayers(_layers);
         Action act = () => ann.Build();
 
         act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Learning.Supervised.ANN must have inputs to build");
+            .WithMessage("Learning.Supervised.Ann must have inputs to build");
     }
 
     [Test]
@@ -107,7 +106,7 @@ public class AnnTests
         var activatorFinal = ActivationFunction.Sigmoid;
 
         var inputsSize = 2;
-        var inputs = V.DenseOfArray(new[] { 0.1, 0.9 });
+        var inputs = V.DenseOfArray([0.1, 0.9]);
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
@@ -121,11 +120,11 @@ public class AnnTests
             .AddParentLayer(firstLayer);
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
-        var ann = A.Create(layers, inputs).Build();
+        var Ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
 
-        ann.Inputs.Should().BeEquivalentTo(inputs);
-        ann.Layers.Should().HaveCount(2);
-        ann.Layers.Should().BeEquivalentTo(new List<Layer> { firstLayer, secondLayer });
+        Ann.Inputs.Should().BeEquivalentTo(inputs);
+        Ann.Layers.Should().HaveCount(2);
+        Ann.Layers.Should().BeEquivalentTo(new List<Layer> { firstLayer, secondLayer });
     }
 
     [Test]
@@ -134,7 +133,7 @@ public class AnnTests
         var activatorFinal = ActivationFunction.Sigmoid;
 
         var inputsSize = 2;
-        var inputs = V.DenseOfArray(new[] { 0.1, 0.9 });
+        var inputs = V.DenseOfArray([0.1, 0.9]);
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
@@ -142,7 +141,7 @@ public class AnnTests
         var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
-        var ann = A.Create(layers, inputs).Build();
+        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
 
         ann.Inputs.Should().BeEquivalentTo(inputs);
         ann.Layers.Should().HaveCount(2);
@@ -154,25 +153,22 @@ public class AnnTests
     }
 
     [Test]
-    public void ANN_That_HasNotBeenBuilt_Should_NotRun()
+    public void Ann_That_HasNotBeenBuilt_Should_NotRun()
     {
-        var ann = A.Create();
-        var act = () =>
-        {
-            var _ = ann.Outputs;
-        };
+        var ann = global::Learning.Supervised.Ann.Ann.Create();
+        var act = () => { _ = ann.Outputs; };
 
         act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Learning.Supervised.ANN must be built before being run");
+            .WithMessage("Learning.Supervised.Ann must be built before being run");
     }
 
     [Test]
-    public void ANN_That_HasBeenBuilt_Should_Run()
+    public void Ann_That_HasBeenBuilt_Should_Run()
     {
         var activatorFinal = ActivationFunction.Sigmoid;
 
         var inputsSize = 2;
-        var inputs = V.DenseOfArray(new[] { 0.1, 0.9 });
+        var inputs = V.DenseOfArray([0.1, 0.9]);
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
@@ -181,12 +177,9 @@ public class AnnTests
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
 
-        var ann = A.Create(layers, inputs).Build();
+        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
 
-        var act = () =>
-        {
-            var _ = ann.Outputs;
-        };
+        var act = () => { _ = ann.Outputs; };
 
         act.Should().NotThrow<InvalidOperationException>();
     }
@@ -200,9 +193,9 @@ public class AnnTests
     ///     1.0 ->  0.0 -> 0.0 -> 1.25 -> 1.0 -> 1.25    -> 1.875
     /// </summary>
     [Test]
-    public void ANN_Runs_Correctly()
+    public void Ann_Runs_Correctly()
     {
-        var inputs = V.DenseOfArray(new[] { 0.5, 1.0 });
+        var inputs = V.DenseOfArray([0.5, 1.0]);
 
         var firstLayerWeights = new[,]
         {
@@ -219,7 +212,7 @@ public class AnnTests
 
 
         var layers = new List<Layer> { firstLayer, secondLayer };
-        var ann = A.Create(layers, inputs).Build();
+        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
 
         var result = ann.Outputs;
 

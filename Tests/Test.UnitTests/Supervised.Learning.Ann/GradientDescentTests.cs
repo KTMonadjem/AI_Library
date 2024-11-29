@@ -1,4 +1,4 @@
-﻿namespace Tests.Supervised.Learning.ANN;
+﻿namespace Tests.Supervised.Learning.Ann;
 
 [TestFixture]
 public class GradientDescentTests

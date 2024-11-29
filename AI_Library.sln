@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Maths", "Source\Common.Maths\Common.Maths.csproj", "{E319C933-F479-41E0-9736-F6E38D5768FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Supervised.ANN", "Source\Domain.Model\Learning.Supervised.ANN.csproj", "{2BB85ED6-EAB2-474D-B309-5DBE74F26D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Supervised.Ann", "Source\Domain.Model\Learning.Supervised.Ann.csproj", "{2BB85ED6-EAB2-474D-B309-5DBE74F26D53}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.UnitTests", "Tests\Test.UnitTests\Test.UnitTests.csproj", "{03340D7E-ADFA-4B4F-9DCB-7EC717CFFDC3}"
 	ProjectSection(ProjectDependencies) = postProject

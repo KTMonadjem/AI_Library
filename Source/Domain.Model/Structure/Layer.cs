@@ -2,7 +2,7 @@
 using MathNet.Numerics.LinearAlgebra;
 using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
-namespace Learning.Supervised.ANN.Structure;
+namespace Learning.Supervised.Ann.Structure;
 
 public class Layer
 {
