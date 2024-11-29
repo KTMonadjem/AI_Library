@@ -1,20 +1,19 @@
-﻿namespace Common.Maths.ActivationFunction.Interface
-{
-    public interface IActivationFunction: IActivationDerivative
-    {
-        public enum ActivationFunction
-        {
-            Binary,
-            Linear,
-            ReLu,
-            LeakyReLu,
-            ELu,
-            Sigmoid,
-            Tanh,
-            Swish
-        }
+﻿namespace Common.Maths.ActivationFunction.Interface;
 
-        public abstract double Delta { get; set; }
-        public abstract double Activate(double input);
+public interface IActivationFunction : IActivationDerivative
+{
+    public enum ActivationFunction
+    {
+        Binary,
+        Linear,
+        ReLu,
+        LeakyReLu,
+        ELu,
+        Sigmoid,
+        Tanh,
+        Swish
     }
+
+    public double Delta { get; set; }
+    public double Activate(double input);
 }

@@ -1,6 +1,5 @@
-﻿namespace Learning.Supervised.Training.Algorithm.Interface
+﻿namespace Learning.Supervised.Training.Algorithm.Interface;
+
+public interface ILearner
 {
-    public interface ILearner
-    {
-    }
 }

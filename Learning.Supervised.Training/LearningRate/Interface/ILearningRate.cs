@@ -1,7 +1,6 @@
-﻿namespace Learning.Supervised.Training.LearningRate.Interface
+﻿namespace Learning.Supervised.Training.LearningRate.Interface;
+
+public interface ILearningRate
 {
-    public interface ILearningRate
-    {
-        public double ApplyLearningRate(double errorSignal);
-    }
+    public double ApplyLearningRate(double errorSignal);
 }

@@ -1,17 +1,16 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
 
-namespace Common.Maths.ActivationFunction.Derivative
+namespace Common.Maths.ActivationFunction.Derivative;
+
+public class LinearDerivative : IActivationDerivative
 {
-    public class LinearDerivative: IActivationDerivative
+    /// <summary>
+    ///     y' = 1
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
     {
-        /// <summary>
-        /// y' = 1
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public double Derive(double x) 
-        {
-            return 1;
-        }
+        return 1;
     }
 }
