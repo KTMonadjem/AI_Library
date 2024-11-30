@@ -41,7 +41,7 @@ public class ELuActivator : IActivationFunction
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    public double Derive(double x)
+    private double Derive(double x)
     {
         return x >= 0 ? 1 : _beta + _alpha;
     }

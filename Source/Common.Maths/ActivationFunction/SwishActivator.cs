@@ -28,7 +28,7 @@ public class SwishActivator : IActivationFunction
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    public double Derive(double x)
+    private double Derive(double x)
     {
         return _swishX + _sigmoidX * (1 - _swishX);
     }

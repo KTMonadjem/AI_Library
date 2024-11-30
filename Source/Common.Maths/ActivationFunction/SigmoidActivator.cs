@@ -26,7 +26,7 @@ public class SigmoidActivator : IActivationFunction
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    public double Derive(double x)
+    private double Derive(double x)
     {
         var log = _sigmoidX;
         return log * (1 - log);

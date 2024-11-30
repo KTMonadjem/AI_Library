@@ -23,7 +23,7 @@ public class BinaryActivator : IActivationFunction
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    public double Derive(double x)
+    private static double Derive(double x)
     {
         return 0;
     }

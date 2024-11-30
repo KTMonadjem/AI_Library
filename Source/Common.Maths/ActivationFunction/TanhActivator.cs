@@ -25,7 +25,7 @@ public class TanhActivator : IActivationFunction
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    public double Derive(double x)
+    private double Derive(double x)
     {
         return 1 - Math.Pow(_tanh, 2);
     }

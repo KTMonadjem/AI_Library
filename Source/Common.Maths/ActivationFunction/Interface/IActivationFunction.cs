@@ -16,5 +16,4 @@ public interface IActivationFunction
 
     public double Delta { get; set; }
     public double Activate(double input);
-    public double Derive(double x);
 }
