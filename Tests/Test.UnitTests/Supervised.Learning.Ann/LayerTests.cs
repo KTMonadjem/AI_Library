@@ -22,7 +22,7 @@ public class LayerTests
     private const double MinWeight = -0.5;
     private const double MaxWeight = 0.75;
 
-    [TestCaseSource(nameof(LayerDataSources))]
+    [TestCaseSource(nameof(_layerDataSources))]
     public void Create_Should_CreateCorrectly(
         double[,] weightInputs,
         int numberOfNeurons,
@@ -123,7 +123,7 @@ public class LayerTests
             .WithMessage("Min weight must be less than max weight");
     }
 
-    [TestCaseSource(nameof(LayerDataSources))]
+    [TestCaseSource(nameof(_layerDataSources))]
     public void BuildWeights_Should_CorrectlyBuildNeuronWeights(
         double[,] weightInputs,
         int numberOfNeurons,
@@ -157,8 +157,8 @@ public class LayerTests
         act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
     }
 
-    public static object[] LayerDataSources =
-    {
+    private static object[] _layerDataSources =
+    [
         new object[]
         {
             new double[,]
@@ -190,7 +190,7 @@ public class LayerTests
             3,
             4,
         },
-    };
+    ];
 
     [Test]
     public void AddInputs_Should_ThrowException_When_NoInputsProvided()
@@ -204,7 +204,7 @@ public class LayerTests
                 ActivationFunction
             )
             .BuildWeights();
-        Action act = () => layer.AddInputs(_v.DenseOfArray(new double[] { }));
+        Action act = () => layer.SetInputs(_v.DenseOfArray(new double[] { }));
 
         act.Should().Throw<ArgumentException>().WithMessage("Must have at least one input");
     }
@@ -224,7 +224,7 @@ public class LayerTests
                 ActivationFunction
             )
             .BuildWeights()
-            .AddInputs(_v.DenseOfArray(inputs));
+            .SetInputs(_v.DenseOfArray(inputs));
 
         foreach (var neuron in layer.Neurons)
             neuron.Inputs!.Should().BeEquivalentTo(inputs);
@@ -242,7 +242,7 @@ public class LayerTests
                 ActivationFunction
             )
             .BuildWeights();
-        Action act = () => layer.AddParents(Array.Empty<Neuron>().ToList());
+        Action act = () => layer.SetParents(Array.Empty<Neuron>().ToList());
 
         act.Should()
             .Throw<ArgumentException>()
@@ -261,7 +261,7 @@ public class LayerTests
         var layer = Layer
             .CreateWithRandomWeights(parents.Count, parents.Count, 0, 1, ActivationFunction)
             .BuildWeights()
-            .AddParents(parents);
+            .SetParents(parents);
 
         foreach (var neuron in layer.Neurons)
             neuron.Parents.Should().BeEquivalentTo(parents);

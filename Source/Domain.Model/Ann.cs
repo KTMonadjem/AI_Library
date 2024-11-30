@@ -11,15 +11,13 @@ public class Ann
 
     private Ann() { }
 
-    private Ann(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
+    private Ann(List<Layer> layers, ITrainer trainer)
     {
-        SetInputs(inputs);
         AddLayers(layers);
         SetTrainer(trainer);
     }
 
     public List<Layer> Layers { get; } = [];
-    public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense([]);
     public bool HasRun { get; private set; }
     public bool HasBeenBuilt { get; private set; }
 
@@ -39,12 +37,16 @@ public class Ann
     ///     Run the inputs through this Learning.Supervised.Ann into the output
     /// </summary>
     /// <exception cref="InvalidOperationException"></exception>
-    public void Run()
+    public void Run(Vector<double> inputs)
     {
         if (!HasBeenBuilt)
             throw new InvalidOperationException(
                 "Learning.Supervised.Ann must be built before being run"
             );
+        if (inputs.Count == 0)
+            throw new InvalidOperationException("Learning.Supervised.Ann must have inputs to run");
+
+        Layers.First().SetInputs(inputs);
 
         // We only care about the last layers neurons.
         var finalLayer = Layers.Last().Neurons;
@@ -63,9 +65,9 @@ public class Ann
         return new Ann();
     }
 
-    public static Ann Create(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
+    public static Ann Create(List<Layer> layers, ITrainer trainer)
     {
-        return new Ann(layers, inputs, trainer);
+        return new Ann(layers, trainer);
     }
 
     public Ann AddLayer(Layer layer)
@@ -80,12 +82,6 @@ public class Ann
     {
         foreach (var layer in layers)
             AddLayer(layer);
-        return this;
-    }
-
-    public Ann SetInputs(Vector<double> inputs)
-    {
-        Inputs = inputs;
         return this;
     }
 
@@ -106,10 +102,6 @@ public class Ann
             throw new InvalidOperationException(
                 "Learning.Supervised.Ann must have layers to build"
             );
-        if (Inputs.Count == 0)
-            throw new InvalidOperationException(
-                "Learning.Supervised.Ann must have inputs to build"
-            );
 
         Layer? previous = null;
         foreach (var layer in Layers)
@@ -118,10 +110,7 @@ public class Ann
                 layer.BuildWeights();
             if (!layer.HasInputs)
             {
-                if (previous is null)
-                    // If this is the first layer, use inputs instead of parents
-                    layer.AddInputs(Inputs);
-                else
+                if (previous is not null)
                     // Otherwise add parents to the current layer's inputs
                     layer.AddParentLayer(previous);
             }
@@ -136,5 +125,8 @@ public class Ann
     /// <summary>
     ///     Trains the Learning.Supervised.Ann using the trainer
     /// </summary>
-    public void Train() { }
+    public void Train()
+    {
+        _trainer.Train();
+    }
 }

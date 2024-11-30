@@ -8,8 +8,13 @@ public class Neuron
     private bool _hasActivated;
     private double _output;
 
-    private Neuron(Vector<double>? inputs, List<Neuron>? parents, Vector<double> weights, double bias,
-        IActivationFunction activator)
+    private Neuron(
+        Vector<double>? inputs,
+        List<Neuron>? parents,
+        Vector<double> weights,
+        double bias,
+        IActivationFunction activator
+    )
     {
         Inputs = inputs;
         Parents = parents;
@@ -22,7 +27,8 @@ public class Neuron
     {
         get
         {
-            if (!_hasActivated) Activate();
+            if (!_hasActivated)
+                Activate();
             return _output;
         }
     }
@@ -38,8 +44,12 @@ public class Neuron
         return new Neuron(null, null, weights, bias, activator);
     }
 
-    public static Neuron CreateWithParents(List<Neuron> parents, Vector<double> weights, double bias,
-        IActivationFunction activator)
+    public static Neuron CreateWithParents(
+        List<Neuron> parents,
+        Vector<double> weights,
+        double bias,
+        IActivationFunction activator
+    )
     {
         if (parents.Count != weights.Count)
             throw new ArgumentException("Neuron parents and weights must be the same length");
@@ -47,8 +57,12 @@ public class Neuron
         return new Neuron(null, parents, weights, bias, activator);
     }
 
-    public static Neuron CreateWithInputs(Vector<double> inputs, Vector<double> weights, double bias,
-        IActivationFunction activator)
+    public static Neuron CreateWithInputs(
+        Vector<double> inputs,
+        Vector<double> weights,
+        double bias,
+        IActivationFunction activator
+    )
     {
         if (inputs.Count != weights.Count)
             throw new ArgumentException("Neuron inputs and weights must be the same length");
@@ -58,7 +72,8 @@ public class Neuron
 
     public void SetParents(List<Neuron> parents)
     {
-        if (Inputs != null) throw new ArgumentException("Cannot set neuron parents when inputs are already set");
+        if (Inputs != null)
+            throw new ArgumentException("Cannot set neuron parents when inputs are already set");
 
         if (parents.Count != Weights.Count)
             throw new ArgumentException("Neuron parents and weights must be the same length");
@@ -68,27 +83,30 @@ public class Neuron
 
     public void SetInputs(Vector<double> inputs)
     {
-        if (Parents != null) throw new ArgumentException("Cannot set neuron inputs when parents are already set");
+        if (Parents != null)
+            throw new ArgumentException("Cannot set neuron inputs when parents are already set");
 
         if (inputs.Count != Weights.Count)
             throw new ArgumentException("Neuron inputs and weights must be the same length");
 
         Inputs = inputs;
+        _hasActivated = false;
     }
 
-
-    public Vector<double> GetInputs()
+    private Vector<double> GetInputs()
     {
-        if (Inputs is not null) return Inputs;
+        if (Inputs is not null)
+            return Inputs;
 
         if (Parents is not null)
         {
             var inputs = new double[Parents.Count];
-            for (var i = 0; i < Parents.Count; i++) inputs[i] = Parents[i].Output;
+            for (var i = 0; i < Parents.Count; i++)
+                inputs[i] = Parents[i].Output;
             return Vector<double>.Build.Dense(inputs);
         }
 
-        throw new ArgumentNullException();
+        throw new InvalidOperationException("Neuron does not have inputs.");
     }
 
     /// <summary>
@@ -99,9 +117,7 @@ public class Neuron
     public Neuron? ModifyWeights(double error)
     {
         // Modify weights
-        foreach (var weight in Weights)
-        {
-        }
+        foreach (var weight in Weights) { }
 
         // Modify bias
 

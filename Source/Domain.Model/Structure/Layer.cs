@@ -102,11 +102,11 @@ public class Layer
     }
 
     /// <summary>
-    ///     Add inputs to the neurons in this layer
+    ///     Set inputs of the neurons in this layer
     /// </summary>
     /// <param name="inputs"></param>
     /// <returns></returns>
-    public Layer AddInputs(Vector<double> inputs)
+    public Layer SetInputs(Vector<double> inputs)
     {
         if (inputs.Count == 0)
             throw new ArgumentException("Must have at least one input");
@@ -124,7 +124,7 @@ public class Layer
     /// </summary>
     /// <param name="parents"></param>
     /// <returns></returns>
-    public Layer AddParents(List<Neuron> parents)
+    public Layer SetParents(List<Neuron> parents)
     {
         if (parents.Count == 0)
             throw new ArgumentException("Parents must be provided to add parents to this layer");
@@ -143,11 +143,11 @@ public class Layer
     /// <returns></returns>
     public Layer AddParentLayer(Layer layer)
     {
-        return AddParents(layer.Neurons);
+        return SetParents(layer.Neurons);
     }
 
     /// <summary>
-    ///     Deep copy this layer
+    ///     Deep copy the structure of this layer
     /// </summary>
     /// <returns></returns>
     public Layer Clone()
