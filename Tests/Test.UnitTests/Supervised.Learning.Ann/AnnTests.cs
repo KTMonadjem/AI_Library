@@ -2,6 +2,11 @@
 using Common.Maths.ActivationFunction.Interface;
 using FluentAssertions;
 using Learning.Supervised.Ann.Structure;
+using Learning.Supervised.Ann.Trainer;
+using Learning.Supervised.Training.Algorithm.Interface;
+using Learning.Supervised.Training.Data;
+using Learning.Supervised.Training.LearningRate;
+using Learning.Supervised.Training.LossFunction;
 using MathNet.Numerics.LinearAlgebra;
 using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
@@ -19,6 +24,15 @@ public class AnnTests
             Layer.Create(_layerMatrix.Multiply(2), ActivationFunction),
         ];
         _inputs = _v.Dense(_inputsArray);
+        _trainer = new BackPropagationWithGradientDescentTrainer(
+            new FlatLearningRate(0.9),
+            new MeanSquaredError(),
+            new SupervisedLearningData(
+                Matrix<double>.Build.Random(0, 0),
+                Matrix<double>.Build.Random(0, 0)
+            ),
+            global::Learning.Supervised.Ann.Ann.Create()
+        );
     }
 
     private static readonly VectorBuilder<double> _v = Vector<double>.Build;
@@ -37,6 +51,8 @@ public class AnnTests
 
     private List<Layer> _layers;
     private Vector<double> _inputs;
+    private ITrainer _trainer;
+
     private static readonly IActivationFunction _activator = new LinearActivator();
     private const ActivationFunction ActivationFunction = IActivationFunction
         .ActivationFunction
@@ -52,7 +68,7 @@ public class AnnTests
     [Test]
     public void CreateWithParams_Should_SuccessfullyCreateAnn()
     {
-        var ann = global::Learning.Supervised.Ann.Ann.Create(_layers, _inputs);
+        var ann = global::Learning.Supervised.Ann.Ann.Create(_layers, _inputs, _trainer);
         ann.Layers.Should().BeEquivalentTo(_layers);
         ann.Inputs.Should().BeEquivalentTo(_inputs);
     }
@@ -127,7 +143,7 @@ public class AnnTests
             .AddParentLayer(firstLayer);
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
-        var Ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        var Ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs, _trainer).Build();
 
         Ann.Inputs.Should().BeEquivalentTo(inputs);
         Ann.Layers.Should().HaveCount(2);
@@ -160,7 +176,7 @@ public class AnnTests
         );
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
-        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs, _trainer).Build();
         ann.Run();
 
         ann.Inputs.Should().BeEquivalentTo(inputs);
@@ -213,7 +229,7 @@ public class AnnTests
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
 
-        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs, _trainer).Build();
         ann.Run();
 
         var act = () =>
@@ -251,7 +267,7 @@ public class AnnTests
         var secondLayer = Layer.Create(_m.DenseOfArray(secondLayerWeights), ActivationFunction);
 
         var layers = new List<Layer> { firstLayer, secondLayer };
-        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs, _trainer).Build();
         ann.Run();
 
         var result = ann.Outputs;

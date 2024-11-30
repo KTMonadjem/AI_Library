@@ -1,19 +1,21 @@
-﻿using Learning.Supervised.Ann.Interface;
-using Learning.Supervised.Ann.Structure;
+﻿using Learning.Supervised.Ann.Structure;
+using Learning.Supervised.Training.Algorithm.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace Learning.Supervised.Ann;
 
-public class Ann : IAnn
+public class Ann
 {
     private Vector<double> _outputs = null!;
+    private ITrainer _trainer = null!;
 
     private Ann() { }
 
-    private Ann(List<Layer> layers, Vector<double> inputs)
+    private Ann(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
     {
         SetInputs(inputs);
         AddLayers(layers);
+        SetTrainer(trainer);
     }
 
     public List<Layer> Layers { get; } = [];
@@ -61,9 +63,9 @@ public class Ann : IAnn
         return new Ann();
     }
 
-    public static Ann Create(List<Layer> layers, Vector<double> inputs)
+    public static Ann Create(List<Layer> layers, Vector<double> inputs, ITrainer trainer)
     {
-        return new Ann(layers, inputs);
+        return new Ann(layers, inputs, trainer);
     }
 
     public Ann AddLayer(Layer layer)
@@ -84,6 +86,12 @@ public class Ann : IAnn
     public Ann SetInputs(Vector<double> inputs)
     {
         Inputs = inputs;
+        return this;
+    }
+
+    public Ann SetTrainer(ITrainer trainer)
+    {
+        _trainer = trainer;
         return this;
     }
 
