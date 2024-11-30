@@ -1,5 +1,4 @@
 ﻿using Common.Maths.ActivationFunction;
-using Common.Maths.ActivationFunction.Derivative;
 using FluentAssertions;
 
 namespace Tests.Common.Maths;
@@ -12,7 +11,7 @@ public class ActivationDerivativeTests
     [TestCase(-100)]
     public void BinaryDerivative_Should_ReturnCorrectValues(double x)
     {
-        var result = new BinaryDerivative().Derive(x);
+        var result = new BinaryActivator().Derive(x);
         result.Should().Be(0);
     }
 
@@ -21,7 +20,7 @@ public class ActivationDerivativeTests
     [TestCase(-100)]
     public void LinearDerivative_Should_ReturnCorrectValues(double x)
     {
-        var result = new LinearDerivative().Derive(x);
+        var result = new LinearActivator().Derive(x);
         result.Should().Be(1);
     }
 
@@ -30,14 +29,14 @@ public class ActivationDerivativeTests
     [TestCase(-100, 0)]
     public void ReLuDerivative_Should_ReturnCorrectValues(double x, double y)
     {
-        var result = new ReLuDerivative().Derive(x);
+        var result = new ReLuActivator().Derive(x);
         result.Should().Be(y);
     }
 
     [Test]
     public void LeakyReLuDerivative_Should_Throw_ArgumentOutOfRangeException_When_LeakIsNegative()
     {
-        Action act = () => new LeakyReLuDerivative(-0.1);
+        Action act = () => new LeakyReLuActivator(-0.1);
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
@@ -48,7 +47,7 @@ public class ActivationDerivativeTests
     [TestCase(-100, 0.5, 0.5)]
     public void LeakyReLuDerivative_Should_ReturnCorrectValues(double x, double y, double leak)
     {
-        var result = new LeakyReLuDerivative(leak).Derive(x);
+        var result = new LeakyReLuActivator(leak).Derive(x);
         result.Should().Be(y);
     }
 
@@ -67,7 +66,7 @@ public class ActivationDerivativeTests
     [Test]
     public void ELuDerivative_Should_Throw_ArgumentOutOfRangeException_When_AlphaIsNegative()
     {
-        Action act = () => new ELuDerivative(-0.1);
+        Action act = () => new ELuActivator(-0.1);
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }

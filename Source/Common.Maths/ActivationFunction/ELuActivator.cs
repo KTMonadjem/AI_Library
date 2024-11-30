@@ -1,17 +1,23 @@
-﻿using Common.Maths.ActivationFunction.Derivative;
-using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Interface;
 
 namespace Common.Maths.ActivationFunction;
 
-public class ELuActivator : ELuDerivative, IActivationFunction
+public class ELuActivator : IActivationFunction
 {
+    private readonly double _alpha;
+    private double _beta;
+
     /// <summary>
     ///     Create an ELu activator with Alpha
     /// </summary>
     /// <param name="alpha">A constant to multiply the exp by</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public ELuActivator(double alpha) : base(alpha)
+    public ELuActivator(double alpha)
     {
+        if (alpha < 0)
+            throw new ArgumentOutOfRangeException(nameof(alpha));
+
+        _alpha = alpha;
     }
 
     public double Delta { get; set; }
@@ -24,8 +30,19 @@ public class ELuActivator : ELuDerivative, IActivationFunction
     /// <returns></returns>
     public double Activate(double input)
     {
-        Beta = input > 0 ? input : _alpha * (Math.Pow(Math.E, input) - 1);
+        _beta = input > 0 ? input : _alpha * (Math.Pow(Math.E, input) - 1);
         Delta = Derive(input);
-        return Beta;
+        return _beta;
+    }
+
+    /// <summary>
+    ///     y' = 1 if x > 0
+    ///     y' = Alpha * (e^x - 1) + Alpha
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
+    {
+        return x >= 0 ? 1 : _beta + _alpha;
     }
 }

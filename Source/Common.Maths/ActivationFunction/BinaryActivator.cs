@@ -1,9 +1,8 @@
-﻿using Common.Maths.ActivationFunction.Derivative;
-using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Interface;
 
 namespace Common.Maths.ActivationFunction;
 
-public class BinaryActivator : BinaryDerivative, IActivationFunction
+public class BinaryActivator : IActivationFunction
 {
     public double Delta { get; set; }
 
@@ -17,5 +16,15 @@ public class BinaryActivator : BinaryDerivative, IActivationFunction
     {
         Delta = Derive(input);
         return input > 0 ? 1 : 0;
+    }
+
+    /// <summary>
+    ///     y' = 0
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
+    {
+        return 0;
     }
 }

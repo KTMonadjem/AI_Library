@@ -1,9 +1,8 @@
-﻿using Common.Maths.ActivationFunction.Derivative;
-using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Interface;
 
 namespace Common.Maths.ActivationFunction;
 
-public class ReLuActivator : ReLuDerivative, IActivationFunction
+public class ReLuActivator : IActivationFunction
 {
     public double Delta { get; set; }
 
@@ -17,5 +16,16 @@ public class ReLuActivator : ReLuDerivative, IActivationFunction
     {
         Delta = Derive(input);
         return Math.Max(input, 0);
+    }
+
+    /// <summary>
+    ///     y' = 1 if x >= 0
+    ///     y' = 0 if x < 0
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
+    {
+        return x >= 0 ? 1 : 0;
     }
 }

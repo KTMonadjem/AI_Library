@@ -1,11 +1,12 @@
-﻿using Common.Maths.ActivationFunction.Derivative;
-using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics;
 
 namespace Common.Maths.ActivationFunction;
 
-public class SigmoidActivator : SigmoidDerivative, IActivationFunction
+public class SigmoidActivator : IActivationFunction
 {
+    private double _sigmoidX;
+
     public double Delta { get; set; }
 
     /// <summary>
@@ -15,8 +16,19 @@ public class SigmoidActivator : SigmoidDerivative, IActivationFunction
     /// <returns></returns>
     public double Activate(double input)
     {
-        SigmoidX = SpecialFunctions.Logistic(input);
+        _sigmoidX = SpecialFunctions.Logistic(input);
         Delta = Derive(input);
-        return SigmoidX;
+        return _sigmoidX;
+    }
+
+    /// <summary>
+    ///     y' = sigmoid(x) * (1 - sigmoid(x))
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
+    {
+        var log = _sigmoidX;
+        return log * (1 - log);
     }
 }

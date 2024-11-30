@@ -1,9 +1,8 @@
-﻿using Common.Maths.ActivationFunction.Derivative;
-using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Interface;
 
 namespace Common.Maths.ActivationFunction;
 
-public class LeakyReLuActivator : LeakyReLuDerivative, IActivationFunction
+public class LeakyReLuActivator : IActivationFunction
 {
     private readonly double _leak;
 
@@ -13,9 +12,10 @@ public class LeakyReLuActivator : LeakyReLuDerivative, IActivationFunction
     /// </summary>
     /// <param name="leak"></param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public LeakyReLuActivator(double leak) : base(leak)
+    public LeakyReLuActivator(double leak)
     {
-        if (leak < 0) throw new ArgumentOutOfRangeException(nameof(leak));
+        if (leak < 0)
+            throw new ArgumentOutOfRangeException(nameof(leak));
 
         _leak = leak;
     }
@@ -32,5 +32,16 @@ public class LeakyReLuActivator : LeakyReLuDerivative, IActivationFunction
     {
         Delta = Derive(input);
         return input > 0 ? input : _leak * input;
+    }
+
+    /// <summary>
+    ///     y' = 1 if x >= 0
+    ///     y' = Leak if x < 0
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
+    {
+        return x >= 0 ? 1 : _leak;
     }
 }

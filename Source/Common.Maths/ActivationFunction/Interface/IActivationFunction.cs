@@ -1,6 +1,6 @@
 ﻿namespace Common.Maths.ActivationFunction.Interface;
 
-public interface IActivationFunction : IActivationDerivative
+public interface IActivationFunction
 {
     public enum ActivationFunction
     {
@@ -11,9 +11,10 @@ public interface IActivationFunction : IActivationDerivative
         ELu,
         Sigmoid,
         Tanh,
-        Swish
+        Swish,
     }
 
     public double Delta { get; set; }
     public double Activate(double input);
+    public double Derive(double x);
 }

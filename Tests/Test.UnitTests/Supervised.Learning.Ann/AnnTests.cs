@@ -16,7 +16,7 @@ public class AnnTests
         _layers = new List<Layer>
         {
             Layer.Create(_layerMatrix, _activationFunction),
-            Layer.Create(_layerMatrix.Multiply(2), _activationFunction)
+            Layer.Create(_layerMatrix.Multiply(2), _activationFunction),
         };
         _inputs = V.Dense(_inputsArray);
     }
@@ -24,12 +24,14 @@ public class AnnTests
     private static readonly VectorBuilder<double> V = Vector<double>.Build;
     private static readonly MatrixBuilder<double> M = Matrix<double>.Build;
 
-    private static readonly Matrix<double> _layerMatrix = M.DenseOfArray(new double[,]
-    {
-        { 1, 2, 3 },
-        { 4, 5, 6 },
-        { 7, 8, 9 }
-    });
+    private static readonly Matrix<double> _layerMatrix = M.DenseOfArray(
+        new double[,]
+        {
+            { 1, 2, 3 },
+            { 4, 5, 6 },
+            { 7, 8, 9 },
+        }
+    );
 
     private static readonly double[] _inputsArray = { 11, 22, 33 };
 
@@ -57,7 +59,8 @@ public class AnnTests
     public void AddLayer_Should_AddLayer()
     {
         var ann = global::Learning.Supervised.Ann.Ann.Create();
-        foreach (var layer in _layers) ann.AddLayer(layer);
+        foreach (var layer in _layers)
+            ann.AddLayer(layer);
 
         ann.Layers.Should().BeEquivalentTo(_layers);
     }
@@ -85,7 +88,8 @@ public class AnnTests
     {
         Action act = () => global::Learning.Supervised.Ann.Ann.Create().Build();
 
-        act.Should().Throw<InvalidOperationException>()
+        act.Should()
+            .Throw<InvalidOperationException>()
             .WithMessage("Learning.Supervised.Ann must have layers to build");
     }
 
@@ -96,7 +100,8 @@ public class AnnTests
         ann.AddLayers(_layers);
         Action act = () => ann.Build();
 
-        act.Should().Throw<InvalidOperationException>()
+        act.Should()
+            .Throw<InvalidOperationException>()
             .WithMessage("Learning.Supervised.Ann must have inputs to build");
     }
 
@@ -111,11 +116,13 @@ public class AnnTests
         var firstLayerSize = 3;
         var secondLayerSize = 4;
 
-        var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction)
+        var firstLayer = Layer
+            .CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction)
             .BuildWeights()
             .AddInputs(inputs);
 
-        var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal)
+        var secondLayer = Layer
+            .CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal)
             .BuildWeights()
             .AddParentLayer(firstLayer);
 
@@ -137,28 +144,45 @@ public class AnnTests
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
-        var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction);
-        var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
+        var firstLayer = Layer.CreateWithRandomWeights(
+            firstLayerSize,
+            inputsSize,
+            0,
+            1,
+            _activationFunction
+        );
+        var secondLayer = Layer.CreateWithRandomWeights(
+            secondLayerSize,
+            firstLayerSize,
+            0,
+            1,
+            activatorFinal
+        );
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
         var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        ann.Run();
 
         ann.Inputs.Should().BeEquivalentTo(inputs);
         ann.Layers.Should().HaveCount(2);
-        ann.Layers.Should().BeEquivalentTo(new List<Layer>
-        {
-            firstLayer.BuildWeights().AddInputs(inputs),
-            secondLayer.BuildWeights().AddParentLayer(firstLayer)
-        });
+        ann.Layers.Should()
+            .BeEquivalentTo(
+                new List<Layer>
+                {
+                    firstLayer.BuildWeights().AddInputs(inputs),
+                    secondLayer.BuildWeights().AddParentLayer(firstLayer),
+                }
+            );
     }
 
     [Test]
     public void Ann_That_HasNotBeenBuilt_Should_NotRun()
     {
         var ann = global::Learning.Supervised.Ann.Ann.Create();
-        var act = () => { _ = ann.Outputs; };
+        var act = () => ann.Run();
 
-        act.Should().Throw<InvalidOperationException>()
+        act.Should()
+            .Throw<InvalidOperationException>()
             .WithMessage("Learning.Supervised.Ann must be built before being run");
     }
 
@@ -172,14 +196,30 @@ public class AnnTests
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
-        var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction);
-        var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, firstLayerSize, 0, 1, activatorFinal);
+        var firstLayer = Layer.CreateWithRandomWeights(
+            firstLayerSize,
+            inputsSize,
+            0,
+            1,
+            _activationFunction
+        );
+        var secondLayer = Layer.CreateWithRandomWeights(
+            secondLayerSize,
+            firstLayerSize,
+            0,
+            1,
+            activatorFinal
+        );
 
         var layers = new List<Layer> { firstLayer.Clone(), secondLayer.Clone() };
 
         var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        ann.Run();
 
-        var act = () => { _ = ann.Outputs; };
+        var act = () =>
+        {
+            _ = ann.Outputs;
+        };
 
         act.Should().NotThrow<InvalidOperationException>();
     }
@@ -200,19 +240,19 @@ public class AnnTests
         var firstLayerWeights = new[,]
         {
             { 0, 0.5, 1.0 },
-            { 1.0, 0.5, 0 }
+            { 1.0, 0.5, 0 },
         };
         var secondLayerWeights = new[,]
         {
-            { 0, 0.5, 1.0 }
+            { 0, 0.5, 1.0 },
         };
 
         var firstLayer = Layer.Create(M.DenseOfArray(firstLayerWeights), _activationFunction);
         var secondLayer = Layer.Create(M.DenseOfArray(secondLayerWeights), _activationFunction);
 
-
         var layers = new List<Layer> { firstLayer, secondLayer };
         var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
+        ann.Run();
 
         var result = ann.Outputs;
 

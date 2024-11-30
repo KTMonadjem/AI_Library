@@ -1,11 +1,13 @@
-﻿using Common.Maths.ActivationFunction.Derivative;
-using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics;
 
 namespace Common.Maths.ActivationFunction;
 
-public class SwishActivator : SwishDerivative, IActivationFunction
+public class SwishActivator : IActivationFunction
 {
+    private double _sigmoidX;
+    private double _swishX;
+
     public double Delta { get; set; }
 
     /// <summary>
@@ -15,9 +17,19 @@ public class SwishActivator : SwishDerivative, IActivationFunction
     /// <returns></returns>
     public double Activate(double input)
     {
-        SigmoidX = SpecialFunctions.Logistic(input);
-        SwishX = input * SigmoidX;
+        _sigmoidX = SpecialFunctions.Logistic(input);
+        _swishX = input * _sigmoidX;
         Delta = Derive(input);
-        return SwishX;
+        return _swishX;
+    }
+
+    /// <summary>
+    ///     y' = x * sigmoid(x) + sigmoid(x)(1 - x * sigmoid(x))
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public double Derive(double x)
+    {
+        return _swishX + _sigmoidX * (1 - _swishX);
     }
 }
