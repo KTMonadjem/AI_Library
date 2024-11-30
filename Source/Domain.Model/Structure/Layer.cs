@@ -23,6 +23,7 @@ public class Layer
     public ActivationFunction Activator { get; }
     public bool IsBuilt { get; private set; }
     public bool HasInputs { get; private set; }
+    public Layer? ParentLayer { get; private set; }
 
     public static Layer Create(
         Matrix<double> weights,
@@ -119,31 +120,23 @@ public class Layer
     }
 
     /// <summary>
-    ///     Link a set of parent neurons to the neurons in the layer.
-    ///     This does fully connected mapping.
-    /// </summary>
-    /// <param name="parents"></param>
-    /// <returns></returns>
-    public Layer SetParents(List<Neuron> parents)
-    {
-        if (parents.Count == 0)
-            throw new ArgumentException("Parents must be provided to add parents to this layer");
-
-        foreach (var neuron in Neurons)
-            neuron.SetParents(parents);
-
-        HasInputs = true;
-        return this;
-    }
-
-    /// <summary>
     ///     Adds another layer's neurons as the parents of the current layer
     /// </summary>
     /// <param name="layer"></param>
     /// <returns></returns>
     public Layer AddParentLayer(Layer layer)
     {
-        return SetParents(layer.Neurons);
+        if (layer.Neurons.Count == 0)
+            throw new ArgumentException(
+                "Parent layer must have neurons to add parents to this layer"
+            );
+
+        foreach (var neuron in Neurons)
+            neuron.SetParents(layer.Neurons);
+
+        HasInputs = true;
+        ParentLayer = layer;
+        return this;
     }
 
     /// <summary>

@@ -34,7 +34,9 @@ public class BackPropagationWithGradientDescent : ITrainer
                 throw new InvalidOperationException("Cannot train Ann before building.");
 
             for (var epoch = 0; epoch < Data.MaxEpochs; epoch++)
+            {
                 TrainOnce(epoch);
+            }
         }
         catch (Exception e)
         {
@@ -52,5 +54,26 @@ public class BackPropagationWithGradientDescent : ITrainer
         var outputs = _ann.Outputs;
 
         var loss = LossFunction.CalculateLoss(expectedOutputs, outputs);
+
+        var outputLayer = _ann.Layers.Last();
+
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(
+            outputLayer.Neurons.Count,
+            loss.Count
+        );
+
+        // Perform gradient descent (via backprop)
+        for (var neuronIndex = 0; neuronIndex < outputLayer.Neurons.Count; neuronIndex++)
+        {
+            outputLayer.Neurons[neuronIndex].SetGradient(loss[neuronIndex]);
+        }
+
+        var currentLayer = outputLayer.ParentLayer;
+        while (currentLayer is not null)
+        {
+            currentLayer = currentLayer.ParentLayer;
+        }
+
+        // Update weights
     }
 }

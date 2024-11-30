@@ -231,43 +231,6 @@ public class LayerTests
     }
 
     [Test]
-    public void AddParents_Should_ThrowException_When_NoParentsProvided()
-    {
-        var layer = Layer
-            .CreateWithRandomWeights(
-                NumberOfNeurons,
-                NumberOfWeights,
-                MinWeight,
-                MaxWeight,
-                ActivationFunction
-            )
-            .BuildWeights();
-        Action act = () => layer.SetParents(Array.Empty<Neuron>().ToList());
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("Parents must be provided to add parents to this layer");
-    }
-
-    [Test]
-    public void AddParents_Should_Succeed_When_ValidParents()
-    {
-        var weights = Vector<double>.Build.Dense(new double[] { });
-        var parents = new List<Neuron>
-        {
-            Neuron.Create(weights, 0, _activator),
-            Neuron.Create(weights.Multiply(2), 0, _activator),
-        };
-        var layer = Layer
-            .CreateWithRandomWeights(parents.Count, parents.Count, 0, 1, ActivationFunction)
-            .BuildWeights()
-            .SetParents(parents);
-
-        foreach (var neuron in layer.Neurons)
-            neuron.Parents.Should().BeEquivalentTo(parents);
-    }
-
-    [Test]
     public void AddParentLayer_Should_Succeed_When_ValidParents()
     {
         var parentCount = 2;

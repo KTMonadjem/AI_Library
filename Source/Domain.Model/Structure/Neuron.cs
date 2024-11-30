@@ -7,6 +7,7 @@ public class Neuron
 {
     private bool _hasActivated;
     private double _output;
+    private double _gradient = 0;
 
     private Neuron(
         Vector<double>? inputs,
@@ -110,18 +111,28 @@ public class Neuron
     }
 
     /// <summary>
+    /// Calculates the gradient from the upstream loss and sets it
+    /// </summary>
+    /// <param name="upstreamLoss"></param>
+    public void SetGradient(double upstreamLoss)
+    {
+        _gradient = Activator.Delta * upstreamLoss;
+    }
+
+    /// <summary>
     ///     Modify each weight using gradient descent
     /// </summary>
     /// <param name="error"></param>
     /// <returns></returns>
-    public Neuron? ModifyWeights(double error)
+    public Neuron ModifyWeights(double error)
     {
         // Modify weights
         foreach (var weight in Weights) { }
 
         // Modify bias
 
-        return null;
+        _hasActivated = true;
+        return this;
     }
 
     private double SumInputs()

@@ -4,7 +4,7 @@ using FluentAssertions;
 using Learning.Supervised.Ann.Structure;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Tests.Supervised.Learning.Ann.Structure;
+namespace Tests.Supervised.Learning.Ann;
 
 [TestFixture]
 public class NeuronTests
@@ -17,13 +17,13 @@ public class NeuronTests
         _parents = [parent1, parent2];
     }
 
-    private static readonly VectorBuilder<double> V = Vector<double>.Build;
+    private static readonly VectorBuilder<double> _v = Vector<double>.Build;
 
     private static readonly Vector<double> _inputs = Vector<double>.Build.Dense([1, 2, 3, 4, 5]);
 
-    private static readonly Vector<double> _parent1Inputs = V.Dense([1, 2]);
+    private static readonly Vector<double> _parent1Inputs = _v.Dense([1, 2]);
     private static readonly Vector<double> _parent1Weights = _parent1Inputs.Clone();
-    private static readonly Vector<double> _parent2Inputs = V.Dense([3, 4]);
+    private static readonly Vector<double> _parent2Inputs = _v.Dense([3, 4]);
     private static readonly Vector<double> _parent2Weights = _parent2Inputs.Clone();
     private static List<Neuron> _parents = null!;
 
