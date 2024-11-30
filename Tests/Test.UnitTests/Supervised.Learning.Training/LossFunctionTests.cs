@@ -22,22 +22,24 @@ public class LossFunctionTests
     }
 
     [Test]
-    public void MeanSquaredError_Should_CalculateMSE()
+    public void MeanSquaredError_Should_CalculateMSEWithMultipleInputs()
     {
         var expected = Vector<double>.Build.DenseOfArray([1, 2, 3]);
         var actual = Vector<double>.Build.DenseOfArray([2, 4, 6]);
 
-        new MeanSquaredError()
-            .CalculateLoss(expected, actual)
-            .Should()
-            .BeEquivalentTo(
-                Vector<double>.Build.DenseOfArray(
-                    [
-                        Math.Sqrt(Math.Pow(2 - 1, 2)),
-                        Math.Sqrt(Math.Pow(4 - 2, 2)),
-                        Math.Sqrt(Math.Pow(6 - 3, 2)),
-                    ]
-                )
-            );
+        var mse = new MeanSquaredError().CalculateLoss(expected, actual);
+        var expectedOutput = Math.Pow(2 - 1, 2) + Math.Pow(4 - 2, 2) + Math.Pow(6 - 3, 2);
+        expectedOutput /= 3;
+
+        mse.Should().Be(expectedOutput);
+    }
+
+    [Test]
+    public void MeanSquaredError_Should_CalculateMSEWithSingleInputs()
+    {
+        var mse = new MeanSquaredError().CalculateLoss(2, 1);
+        var expectedOutput = Math.Pow(2 - 1, 2);
+
+        mse.Should().Be(expectedOutput);
     }
 }

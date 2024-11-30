@@ -12,6 +12,7 @@ public interface IActivationFunction
         Sigmoid,
         Tanh,
         Swish,
+        Softmax,
     }
 
     public double Delta { get; set; }

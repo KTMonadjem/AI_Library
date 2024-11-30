@@ -113,10 +113,11 @@ public class Neuron
     /// <summary>
     /// Calculates the gradient from the upstream loss and sets it
     /// </summary>
-    /// <param name="upstreamLoss"></param>
-    public void SetGradient(double upstreamLoss)
+    /// <param name="upstreamError"></param>
+    public double SetGradient(double upstreamError)
     {
-        _gradient = Activator.Delta * upstreamLoss;
+        _gradient = Activator.Delta * upstreamError;
+        return _gradient;
     }
 
     /// <summary>

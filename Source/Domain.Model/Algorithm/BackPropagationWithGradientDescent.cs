@@ -1,7 +1,8 @@
-﻿using Learning.Supervised.Training.Algorithm.Interface;
+using Learning.Supervised.Training.Algorithm.Interface;
 using Learning.Supervised.Training.Data;
 using Learning.Supervised.Training.LearningRate.Interface;
 using Learning.Supervised.Training.LossFunction.Interface;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Learning.Supervised.Ann.Algorithm;
 
@@ -35,7 +36,10 @@ public class BackPropagationWithGradientDescent : ITrainer
 
             for (var epoch = 0; epoch < Data.MaxEpochs; epoch++)
             {
-                TrainOnce(epoch);
+                var loss = TrainOnce(epoch);
+
+                if (loss < Data.MinError)
+                    return;
             }
         }
         catch (Exception e)
@@ -44,7 +48,7 @@ public class BackPropagationWithGradientDescent : ITrainer
         }
     }
 
-    private void TrainOnce(int epoch)
+    private double TrainOnce(int epoch)
     {
         var (inputs, expectedOutputs) = Data.GetInputsOutputs(epoch);
 
@@ -53,27 +57,38 @@ public class BackPropagationWithGradientDescent : ITrainer
 
         var outputs = _ann.Outputs;
 
-        var loss = LossFunction.CalculateLoss(expectedOutputs, outputs);
-
         var outputLayer = _ann.Layers.Last();
-
-        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(
-            outputLayer.Neurons.Count,
-            loss.Count
-        );
-
         // Perform gradient descent (via backprop)
+        var previousLayerGradients = new double[outputLayer.Neurons.Count];
         for (var neuronIndex = 0; neuronIndex < outputLayer.Neurons.Count; neuronIndex++)
         {
-            outputLayer.Neurons[neuronIndex].SetGradient(loss[neuronIndex]);
+            previousLayerGradients[neuronIndex] = outputLayer
+                .Neurons[neuronIndex]
+                .SetGradient(expectedOutputs[neuronIndex] - outputs[neuronIndex]);
         }
 
-        var currentLayer = outputLayer.ParentLayer;
+        var previousLayer = outputLayer;
+        var currentLayer = previousLayer.ParentLayer;
+        var previousLayerVector = Vector<double>.Build.Dense(previousLayerGradients);
         while (currentLayer is not null)
         {
-            currentLayer = currentLayer.ParentLayer;
+            previousLayerGradients = new double[currentLayer.Neurons.Count];
+
+            for (var neuronIndex = 0; neuronIndex < currentLayer.Neurons.Count; neuronIndex++)
+            {
+                var weightValues = previousLayer.Weights.Column(neuronIndex + 1);
+                previousLayerGradients[neuronIndex] = currentLayer
+                    .Neurons[neuronIndex]
+                    .SetGradient(previousLayerVector.PointwiseMultiply(weightValues).Sum());
+            }
+
+            previousLayer = currentLayer;
+            currentLayer = previousLayer.ParentLayer;
+            previousLayerVector = Vector<double>.Build.Dense(previousLayerGradients);
         }
 
         // Update weights
+
+        return LossFunction.CalculateLoss(expectedOutputs, outputs);
     }
 }
