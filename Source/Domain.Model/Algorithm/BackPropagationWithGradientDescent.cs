@@ -34,14 +34,7 @@ public class BackPropagationWithGradientDescent : ITrainer
                 throw new InvalidOperationException("Cannot train Ann before building.");
 
             for (var epoch = 0; epoch < Data.MaxEpochs; epoch++)
-            {
-                var inputsOutputs = Data.GetInputsOutputs(epoch);
-
-                if (!_ann.HasRun)
-                    _ann.Run(inputsOutputs.Column(0));
-
-                var outputs = _ann.Outputs;
-            }
+                TrainOnce(epoch);
         }
         catch (Exception e)
         {
@@ -49,5 +42,15 @@ public class BackPropagationWithGradientDescent : ITrainer
         }
     }
 
-    private void TrainOnce() { }
+    private void TrainOnce(int epoch)
+    {
+        var (inputs, expectedOutputs) = Data.GetInputsOutputs(epoch);
+
+        if (!_ann.HasRun)
+            _ann.Run(inputs);
+
+        var outputs = _ann.Outputs;
+
+        var loss = LossFunction.CalculateLoss(expectedOutputs, outputs);
+    }
 }
