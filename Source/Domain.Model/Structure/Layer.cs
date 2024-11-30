@@ -11,7 +11,7 @@ public class Layer
 
     private Layer(Matrix<double> weights, ActivationFunction activator, double? alpha = null)
     {
-        Neurons = new List<Neuron>();
+        Neurons = [];
         Weights = weights;
 
         _alpha = alpha;
@@ -24,9 +24,13 @@ public class Layer
     public bool IsBuilt { get; private set; }
     public bool HasInputs { get; private set; }
 
-    public static Layer Create(Matrix<double> weights, ActivationFunction activator, double? alpha = null)
+    public static Layer Create(
+        Matrix<double> weights,
+        ActivationFunction activator,
+        double? alpha = null
+    )
     {
-        if (weights.ColumnCount <= 0 && weights.RowCount <= 0)
+        if (weights is { ColumnCount: <= 0, RowCount: <= 0 })
             throw new ArgumentException("Layer must be created with weights");
         return new Layer(weights, activator, alpha);
     }
@@ -39,6 +43,7 @@ public class Layer
     /// <param name="minWeight"></param>
     /// <param name="maxWeight"></param>
     /// <param name="activator"></param>
+    /// <param name="alpha"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     public static Layer CreateWithRandomWeights(
@@ -47,12 +52,16 @@ public class Layer
         double minWeight,
         double maxWeight,
         ActivationFunction activator,
-        double? alpha = null)
+        double? alpha = null
+    )
     {
-        if (numberOfNeurons <= 0) throw new ArgumentException("Layer must be created with neurons");
-        if (numberOfWeights <= 0) throw new ArgumentException("Layer must be created with weights");
+        if (numberOfNeurons <= 0)
+            throw new ArgumentException("Layer must be created with neurons");
+        if (numberOfWeights <= 0)
+            throw new ArgumentException("Layer must be created with weights");
 
-        if (minWeight > maxWeight) throw new ArgumentException("Min weight must be less than max weight");
+        if (minWeight > maxWeight)
+            throw new ArgumentException("Min weight must be less than max weight");
 
         // Add the bias neuron
         numberOfWeights++;
@@ -75,12 +84,16 @@ public class Layer
         for (var i = 0; i < Weights.RowCount; i++)
         {
             var weights = Weights.Row(i);
-            if (weights.Count == 0) continue;
+            if (weights.Count == 0)
+                continue;
 
             var bias = weights[0];
             weights = weights.SubVector(1, weights.Count - 1);
 
-            var activationFunction = ActivationFunctionMapper.MapActivationFunction(Activator, _alpha);
+            var activationFunction = ActivationFunctionMapper.MapActivationFunction(
+                Activator,
+                _alpha
+            );
             Neurons.Add(Neuron.Create(weights, bias, activationFunction));
         }
 
@@ -95,9 +108,11 @@ public class Layer
     /// <returns></returns>
     public Layer AddInputs(Vector<double> inputs)
     {
-        if (!inputs.Any()) throw new ArgumentException("Must have at least one input");
+        if (inputs.Count == 0)
+            throw new ArgumentException("Must have at least one input");
 
-        foreach (var neuron in Neurons) neuron.SetInputs(inputs);
+        foreach (var neuron in Neurons)
+            neuron.SetInputs(inputs);
 
         HasInputs = true;
         return this;
@@ -111,9 +126,11 @@ public class Layer
     /// <returns></returns>
     public Layer AddParents(List<Neuron> parents)
     {
-        if (!parents.Any()) throw new ArgumentException("Parents must be provided to add parents to this layer");
+        if (parents.Count == 0)
+            throw new ArgumentException("Parents must be provided to add parents to this layer");
 
-        foreach (var neuron in Neurons) neuron.SetParents(parents);
+        foreach (var neuron in Neurons)
+            neuron.SetParents(parents);
 
         HasInputs = true;
         return this;

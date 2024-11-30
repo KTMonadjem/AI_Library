@@ -14,23 +14,18 @@ public class NeuronTests
     {
         var parent1 = Neuron.CreateWithInputs(_parent1Inputs, _parent1Weights, Bias, _activator);
         var parent2 = Neuron.CreateWithInputs(_parent2Inputs, _parent2Weights, Bias, _activator);
-        _parents = new List<Neuron>
-        {
-            parent1,
-            parent2
-        };
+        _parents = [parent1, parent2];
     }
 
     private static readonly VectorBuilder<double> V = Vector<double>.Build;
 
-    private static readonly Vector<double> _inputs =
-        Vector<double>.Build.Dense(new double[] { 1, 2, 3, 4, 5 });
+    private static readonly Vector<double> _inputs = Vector<double>.Build.Dense([1, 2, 3, 4, 5]);
 
-    private static readonly Vector<double> _parent1Inputs = V.Dense(new double[] { 1, 2 });
+    private static readonly Vector<double> _parent1Inputs = V.Dense([1, 2]);
     private static readonly Vector<double> _parent1Weights = _parent1Inputs.Clone();
-    private static readonly Vector<double> _parent2Inputs = V.Dense(new double[] { 3, 4 });
+    private static readonly Vector<double> _parent2Inputs = V.Dense([3, 4]);
     private static readonly Vector<double> _parent2Weights = _parent2Inputs.Clone();
-    private static List<Neuron> _parents;
+    private static List<Neuron> _parents = null!;
 
     private static readonly Vector<double> _weights = _inputs.Clone();
     private const double Bias = 10;
@@ -62,9 +57,16 @@ public class NeuronTests
     public void CreateWithInputs_Should_ThrowException_When_InputsAreInvalid()
     {
         Action act = () =>
-            Neuron.CreateWithInputs(_inputs, _weights.SubVector(1, _weights.Count - 1), Bias, _activator);
+            Neuron.CreateWithInputs(
+                _inputs,
+                _weights.SubVector(1, _weights.Count - 1),
+                Bias,
+                _activator
+            );
 
-        act.Should().Throw<ArgumentException>().WithMessage("Neuron inputs and weights must be the same length");
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Neuron inputs and weights must be the same length");
     }
 
     [Test]
@@ -84,9 +86,16 @@ public class NeuronTests
     public void CreateWithParents_Should_ThrowException_When_ParentsAreInvalid()
     {
         Action act = () =>
-            Neuron.CreateWithParents(_parents, _weights.SubVector(1, _weights.Count - 1), Bias, _activator);
+            Neuron.CreateWithParents(
+                _parents,
+                _weights.SubVector(1, _weights.Count - 1),
+                Bias,
+                _activator
+            );
 
-        act.Should().Throw<ArgumentException>().WithMessage("Neuron parents and weights must be the same length");
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Neuron parents and weights must be the same length");
     }
 
     [Test]
@@ -105,7 +114,9 @@ public class NeuronTests
 
         var act = () => neuron.SetParents(_parents);
 
-        act.Should().Throw<ArgumentException>().WithMessage("Cannot set neuron parents when inputs are already set");
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Cannot set neuron parents when inputs are already set");
     }
 
     [Test]
@@ -115,7 +126,9 @@ public class NeuronTests
 
         var act = () => neuron.SetParents(_parents);
 
-        act.Should().Throw<ArgumentException>().WithMessage("Neuron parents and weights must be the same length");
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Neuron parents and weights must be the same length");
     }
 
     [Test]
@@ -130,11 +143,18 @@ public class NeuronTests
     [Test]
     public void SetInputs_Should_ThrowException_When_ParentsAreSet()
     {
-        var neuron = Neuron.CreateWithParents(_parents, _weights.SubVector(0, _parents.Count), Bias, _activator);
+        var neuron = Neuron.CreateWithParents(
+            _parents,
+            _weights.SubVector(0, _parents.Count),
+            Bias,
+            _activator
+        );
 
         var act = () => neuron.SetInputs(_inputs);
 
-        act.Should().Throw<ArgumentException>().WithMessage("Cannot set neuron inputs when parents are already set");
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Cannot set neuron inputs when parents are already set");
     }
 
     [Test]
@@ -144,7 +164,9 @@ public class NeuronTests
 
         var act = () => neuron.SetInputs(_inputs);
 
-        act.Should().Throw<ArgumentException>().WithMessage("Neuron inputs and weights must be the same length");
+        act.Should()
+            .Throw<ArgumentException>()
+            .WithMessage("Neuron inputs and weights must be the same length");
     }
 
     [Test]
@@ -154,7 +176,8 @@ public class NeuronTests
         var output = neuron.Output;
 
         var expected = Bias;
-        for (var i = 0; i < _inputs.Count; i++) expected += _inputs[i] * _weights[i];
+        for (var i = 0; i < _inputs.Count; i++)
+            expected += _inputs[i] * _weights[i];
         expected = _activator.Activate(expected);
 
         output.Should().Be(expected);
@@ -168,7 +191,8 @@ public class NeuronTests
         var output = neuron.Output;
 
         var expected = Bias;
-        for (var i = 0; i < _parents.Count; i++) expected += _parents[i].Output * weights[i];
+        for (var i = 0; i < _parents.Count; i++)
+            expected += _parents[i].Output * weights[i];
         expected = _activator.Activate(expected);
 
         output.Should().Be(expected);

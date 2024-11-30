@@ -13,18 +13,18 @@ public class AnnTests
     [SetUp]
     public void SetUp()
     {
-        _layers = new List<Layer>
-        {
-            Layer.Create(_layerMatrix, _activationFunction),
-            Layer.Create(_layerMatrix.Multiply(2), _activationFunction),
-        };
-        _inputs = V.Dense(_inputsArray);
+        _layers =
+        [
+            Layer.Create(_layerMatrix, ActivationFunction),
+            Layer.Create(_layerMatrix.Multiply(2), ActivationFunction),
+        ];
+        _inputs = _v.Dense(_inputsArray);
     }
 
-    private static readonly VectorBuilder<double> V = Vector<double>.Build;
-    private static readonly MatrixBuilder<double> M = Matrix<double>.Build;
+    private static readonly VectorBuilder<double> _v = Vector<double>.Build;
+    private static readonly MatrixBuilder<double> _m = Matrix<double>.Build;
 
-    private static readonly Matrix<double> _layerMatrix = M.DenseOfArray(
+    private static readonly Matrix<double> _layerMatrix = _m.DenseOfArray(
         new double[,]
         {
             { 1, 2, 3 },
@@ -38,7 +38,9 @@ public class AnnTests
     private List<Layer> _layers;
     private Vector<double> _inputs;
     private static readonly IActivationFunction _activator = new LinearActivator();
-    private static readonly ActivationFunction _activationFunction = ActivationFunction.Linear;
+    private const ActivationFunction ActivationFunction = IActivationFunction
+        .ActivationFunction
+        .Linear;
 
     [Test]
     public void Create_Should_SuccessfullyCreateAnn()
@@ -68,8 +70,7 @@ public class AnnTests
     [Test]
     public void AddLayers_Should_AddLayers()
     {
-        var ann = global::Learning.Supervised.Ann.Ann.Create();
-        ann.AddLayers(_layers);
+        var ann = global::Learning.Supervised.Ann.Ann.Create().AddLayers(_layers);
 
         ann.Layers.Should().BeEquivalentTo(_layers);
     }
@@ -77,8 +78,7 @@ public class AnnTests
     [Test]
     public void SetInputs_Should_SetInputs()
     {
-        var ann = global::Learning.Supervised.Ann.Ann.Create();
-        ann.SetInputs(_inputs);
+        var ann = global::Learning.Supervised.Ann.Ann.Create().SetInputs(_inputs);
 
         ann.Inputs.Should().BeEquivalentTo(_inputs);
     }
@@ -111,13 +111,13 @@ public class AnnTests
         var activatorFinal = ActivationFunction.Sigmoid;
 
         var inputsSize = 2;
-        var inputs = V.DenseOfArray([0.1, 0.9]);
+        var inputs = _v.DenseOfArray([0.1, 0.9]);
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
 
         var firstLayer = Layer
-            .CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, _activationFunction)
+            .CreateWithRandomWeights(firstLayerSize, inputsSize, 0, 1, ActivationFunction)
             .BuildWeights()
             .AddInputs(inputs);
 
@@ -140,7 +140,7 @@ public class AnnTests
         var activatorFinal = ActivationFunction.Sigmoid;
 
         var inputsSize = 2;
-        var inputs = V.DenseOfArray([0.1, 0.9]);
+        var inputs = _v.DenseOfArray([0.1, 0.9]);
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
@@ -149,7 +149,7 @@ public class AnnTests
             inputsSize,
             0,
             1,
-            _activationFunction
+            ActivationFunction
         );
         var secondLayer = Layer.CreateWithRandomWeights(
             secondLayerSize,
@@ -192,7 +192,7 @@ public class AnnTests
         var activatorFinal = ActivationFunction.Sigmoid;
 
         var inputsSize = 2;
-        var inputs = V.DenseOfArray([0.1, 0.9]);
+        var inputs = _v.DenseOfArray([0.1, 0.9]);
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
@@ -201,7 +201,7 @@ public class AnnTests
             inputsSize,
             0,
             1,
-            _activationFunction
+            ActivationFunction
         );
         var secondLayer = Layer.CreateWithRandomWeights(
             secondLayerSize,
@@ -235,7 +235,7 @@ public class AnnTests
     [Test]
     public void Ann_Runs_Correctly()
     {
-        var inputs = V.DenseOfArray([0.5, 1.0]);
+        var inputs = _v.DenseOfArray([0.5, 1.0]);
 
         var firstLayerWeights = new[,]
         {
@@ -247,8 +247,8 @@ public class AnnTests
             { 0, 0.5, 1.0 },
         };
 
-        var firstLayer = Layer.Create(M.DenseOfArray(firstLayerWeights), _activationFunction);
-        var secondLayer = Layer.Create(M.DenseOfArray(secondLayerWeights), _activationFunction);
+        var firstLayer = Layer.Create(_m.DenseOfArray(firstLayerWeights), ActivationFunction);
+        var secondLayer = Layer.Create(_m.DenseOfArray(secondLayerWeights), ActivationFunction);
 
         var layers = new List<Layer> { firstLayer, secondLayer };
         var ann = global::Learning.Supervised.Ann.Ann.Create(layers, inputs).Build();
@@ -256,6 +256,6 @@ public class AnnTests
 
         var result = ann.Outputs;
 
-        result.Should().BeEquivalentTo(V.DenseOfArray(new[] { 1.875 }));
+        result.Should().BeEquivalentTo(_v.DenseOfArray(new[] { 1.875 }));
     }
 }

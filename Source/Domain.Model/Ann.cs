@@ -6,7 +6,6 @@ namespace Learning.Supervised.Ann;
 
 public class Ann : IAnn
 {
-    private bool _inputsModified = true;
     private Vector<double> _outputs = null!;
 
     private Ann() { }
@@ -17,7 +16,7 @@ public class Ann : IAnn
         AddLayers(layers);
     }
 
-    public List<Layer> Layers { get; } = new();
+    public List<Layer> Layers { get; } = [];
     public Vector<double> Inputs { get; private set; } = Vector<double>.Build.Dense([]);
     public bool HasRun { get; private set; }
     public bool HasBeenBuilt { get; private set; }
@@ -46,16 +45,15 @@ public class Ann : IAnn
             );
 
         // We only care about the last layers neurons.
-        var finalLayerCount = Layers.Last().Neurons.Count;
-        var outputs = new double[Layers.Last().Neurons.Count];
-        for (var i = 0; i < finalLayerCount; i++)
+        var finalLayer = Layers.Last().Neurons;
+        var outputs = new double[finalLayer.Count];
+        for (var i = 0; i < finalLayer.Count; i++)
             // Fetching a neuron's output will fetch the parent's output too
             outputs[i] = Layers.Last().Neurons[i].Output;
 
         _outputs = Vector<double>.Build.Dense(outputs);
 
         HasRun = true;
-        _inputsModified = false;
     }
 
     public static Ann Create()
@@ -71,7 +69,7 @@ public class Ann : IAnn
     public Ann AddLayer(Layer layer)
     {
         HasBeenBuilt = false;
-        _inputsModified = true;
+        HasRun = false;
         Layers.Add(layer);
         return this;
     }
@@ -96,11 +94,11 @@ public class Ann : IAnn
     /// <exception cref="InvalidOperationException"></exception>
     public Ann Build()
     {
-        if (!Layers.Any())
+        if (Layers.Count == 0)
             throw new InvalidOperationException(
                 "Learning.Supervised.Ann must have layers to build"
             );
-        if (!Inputs.Any())
+        if (Inputs.Count == 0)
             throw new InvalidOperationException(
                 "Learning.Supervised.Ann must have inputs to build"
             );
