@@ -1,4 +1,6 @@
-﻿namespace Common.Maths.ActivationFunction.Interface;
+﻿using MathNet.Numerics.LinearAlgebra;
+
+namespace Common.Maths.ActivationFunction.Interface;
 
 public interface IActivationFunction
 {
@@ -15,6 +17,8 @@ public interface IActivationFunction
         Softmax,
     }
 
-    public double Delta { get; set; }
-    public double Activate(double input);
+    public (double Output, double Derivative) Activate(double input);
+
+    // TODO: Implement vector activations
+    // public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs);
 }

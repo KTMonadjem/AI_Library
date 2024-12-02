@@ -5,14 +5,14 @@ namespace Common.Maths.ActivationFunction;
 
 public class SoftmaxActivator : IActivationFunction
 {
-    public double Delta { get; set; }
+    public double Delta { get; private set; }
 
     /// <summary>
     ///     y = sigmoid(x)
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
         throw new NotImplementedException();
     }

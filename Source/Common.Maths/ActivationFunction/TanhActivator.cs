@@ -5,28 +5,26 @@ namespace Common.Maths.ActivationFunction;
 
 public class TanhActivator : IActivationFunction
 {
-    private double _tanh;
-    public double Delta { get; set; }
+    public double Delta { get; private set; }
 
     /// <summary>
     ///     y = tanh(x)
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        _tanh = Trig.Tanh(input);
-        Delta = Derive(input);
-        return _tanh;
+        var tanh = Trig.Tanh(input);
+        return (tanh, Derive(tanh));
     }
 
     /// <summary>
     ///     y' = 1 - tanh^2(x)
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="tanh"></param>
     /// <returns></returns>
-    private double Derive(double x)
+    private static double Derive(double tanh)
     {
-        return 1 - Math.Pow(_tanh, 2);
+        return 1 - Math.Pow(tanh, 2);
     }
 }

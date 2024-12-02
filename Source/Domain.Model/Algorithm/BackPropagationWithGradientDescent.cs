@@ -59,33 +59,8 @@ public class BackPropagationWithGradientDescent : ITrainer
 
         var outputLayer = _ann.Layers.Last();
         // Perform gradient descent (via backprop)
-        var previousLayerGradients = new double[outputLayer.Neurons.Count];
-        for (var neuronIndex = 0; neuronIndex < outputLayer.Neurons.Count; neuronIndex++)
-        {
-            previousLayerGradients[neuronIndex] = outputLayer
-                .Neurons[neuronIndex]
-                .SetGradient(expectedOutputs[neuronIndex] - outputs[neuronIndex]);
-        }
 
-        var previousLayer = outputLayer;
-        var currentLayer = previousLayer.ParentLayer;
-        var previousLayerVector = Vector<double>.Build.Dense(previousLayerGradients);
-        while (currentLayer is not null)
-        {
-            previousLayerGradients = new double[currentLayer.Neurons.Count];
-
-            for (var neuronIndex = 0; neuronIndex < currentLayer.Neurons.Count; neuronIndex++)
-            {
-                var weightValues = previousLayer.Weights.Column(neuronIndex + 1);
-                previousLayerGradients[neuronIndex] = currentLayer
-                    .Neurons[neuronIndex]
-                    .SetGradient(previousLayerVector.PointwiseMultiply(weightValues).Sum());
-            }
-
-            previousLayer = currentLayer;
-            currentLayer = previousLayer.ParentLayer;
-            previousLayerVector = Vector<double>.Build.Dense(previousLayerGradients);
-        }
+        // TODO: Backprop
 
         // Update weights
 

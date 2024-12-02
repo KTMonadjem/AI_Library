@@ -1,4 +1,5 @@
-﻿using Common.Maths.ActivationFunction.Interface;
+﻿using Common.Maths.ActivationFunction;
+using Common.Maths.ActivationFunction.Interface;
 using Learning.Supervised.Ann.Algorithm;
 using Learning.Supervised.Ann.Structure;
 using Learning.Supervised.Training.Data;
@@ -19,13 +20,11 @@ public class BackPropagationWithGradientDescentTests
                     Matrix<double>.Build.DenseOfArray(
                         new[,]
                         {
-                            { 0.13, 0.01, 0.02, 0.03 },
-                            { 0.14, 0.04, 0.05, 0.06 },
-                            { 0.15, 0.07, 0.08, 0.09 },
-                            { 0.16, 0.1, 0.11, 0.12 },
+                            { 0.1, 0.2, 0.3 },
+                            { 0.4, 0.5, 0.6 },
                         }
                     ),
-                    IActivationFunction.ActivationFunction.Tanh
+                    new ReLuActivator()
                 )
             )
             .AddLayer(
@@ -33,11 +32,10 @@ public class BackPropagationWithGradientDescentTests
                     Matrix<double>.Build.DenseOfArray(
                         new[,]
                         {
-                            { 0.25, 0.17, 0.18, 0.19, 0.2 },
-                            { 0.26, 0.21, 0.22, 0.23, 0.24 },
+                            { 0.7, 0.8 },
                         }
                     ),
-                    IActivationFunction.ActivationFunction.Sigmoid
+                    new SigmoidActivator()
                 )
             )
             .SetTrainer(
@@ -48,19 +46,22 @@ public class BackPropagationWithGradientDescentTests
                         Matrix<double>.Build.DenseOfArray(
                             new double[,]
                             {
-                                { 1 },
-                                { 2 },
-                                { 3 },
+                                { 0, 0 },
+                                { 0, 1 },
+                                { 1, 0 },
+                                { 1, 1 },
                             }
                         ),
                         Matrix<double>.Build.DenseOfArray(
-                            new[,]
+                            new double[,]
                             {
-                                { 0.25 },
-                                { 0.75 },
+                                { 0 },
+                                { 1 },
+                                { 1 },
+                                { 0 },
                             }
                         ),
-                        1,
+                        100,
                         0.01
                     ),
                     ann

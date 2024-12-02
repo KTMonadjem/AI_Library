@@ -5,31 +5,28 @@ namespace Common.Maths.ActivationFunction;
 
 public class SwishActivator : IActivationFunction
 {
-    private double _sigmoidX;
-    private double _swishX;
-
-    public double Delta { get; set; }
+    public double Delta { get; private set; }
 
     /// <summary>
     ///     y = x * sigmoid(x)
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        _sigmoidX = SpecialFunctions.Logistic(input);
-        _swishX = input * _sigmoidX;
-        Delta = Derive(input);
-        return _swishX;
+        var sigmoidX = SpecialFunctions.Logistic(input);
+        var swishX = input * sigmoidX;
+        return (swishX, Derive(swishX, sigmoidX));
     }
 
     /// <summary>
     ///     y' = x * sigmoid(x) + sigmoid(x)(1 - x * sigmoid(x))
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="swishX"></param>
+    /// <param name="sigmoidX"></param>
     /// <returns></returns>
-    private double Derive(double x)
+    private static double Derive(double swishX, double sigmoidX)
     {
-        return _swishX + _sigmoidX * (1 - _swishX);
+        return swishX + sigmoidX * (1 - swishX);
     }
 }

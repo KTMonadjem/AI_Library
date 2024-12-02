@@ -46,16 +46,16 @@ public class Ann
         if (inputs.Count == 0)
             throw new InvalidOperationException("Learning.Supervised.Ann must have inputs to run");
 
-        Layers.First().SetInputs(inputs);
+        // Run first layer with inputs
+        Layers.First().Activate(inputs);
+        for (var layer = 1; layer < Layers.Count; layer++)
+        {
+            Layers[layer].Activate();
+        }
 
-        // We only care about the last layers neurons.
-        var finalLayer = Layers.Last().Neurons;
-        var outputs = new double[finalLayer.Count];
-        for (var i = 0; i < finalLayer.Count; i++)
-            // Fetching a neuron's output will fetch the parent's output too
-            outputs[i] = Layers.Last().Neurons[i].Output;
-
-        _outputs = Vector<double>.Build.Dense(outputs);
+        _outputs =
+            Layers.Last().Outputs
+            ?? throw new InvalidOperationException("Failed to retrieve final layer output vector");
 
         HasRun = true;
     }
@@ -98,6 +98,9 @@ public class Ann
     /// <exception cref="InvalidOperationException"></exception>
     public Ann Build()
     {
+        if (HasBeenBuilt)
+            return this;
+
         if (Layers.Count == 0)
             throw new InvalidOperationException(
                 "Learning.Supervised.Ann must have layers to build"
@@ -106,13 +109,10 @@ public class Ann
         Layer? previous = null;
         foreach (var layer in Layers)
         {
-            if (!layer.IsBuilt)
-                layer.BuildWeights();
-            if (!layer.HasInputs)
+            if (previous is not null)
             {
-                if (previous is not null)
-                    // Otherwise add parents to the current layer's inputs
-                    layer.AddParentLayer(previous);
+                previous.SetOutputLayer(layer);
+                layer.SetInputLayer(previous);
             }
 
             previous = layer;

@@ -20,18 +20,15 @@ public class LeakyReLuActivator : IActivationFunction
         _leak = leak;
     }
 
-    public double Delta { get; set; }
-
     /// <summary>
     ///     A step function that returns a linear function for x > 0 and
     ///     a close to 0 linear function for x < 0
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        Delta = Derive(input);
-        return input > 0 ? input : _leak * input;
+        return (input > 0 ? input : _leak * input, Derive(input));
     }
 
     /// <summary>

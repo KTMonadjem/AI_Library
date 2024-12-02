@@ -5,30 +5,25 @@ namespace Common.Maths.ActivationFunction;
 
 public class SigmoidActivator : IActivationFunction
 {
-    private double _sigmoidX;
-
-    public double Delta { get; set; }
-
     /// <summary>
     ///     y = sigmoid(x)
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        _sigmoidX = SpecialFunctions.Logistic(input);
-        Delta = Derive(input);
-        return _sigmoidX;
+        var sigmoidX = SpecialFunctions.Logistic(input);
+        return (sigmoidX, Derive(sigmoidX));
     }
 
     /// <summary>
     ///     y' = sigmoid(x) * (1 - sigmoid(x))
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="sigmoidX"></param>
     /// <returns></returns>
-    private double Derive(double x)
+    private static double Derive(double sigmoidX)
     {
-        var log = _sigmoidX;
+        var log = sigmoidX;
         return log * (1 - log);
     }
 }

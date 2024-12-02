@@ -1,11 +1,11 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Common.Maths.ActivationFunction;
 
 public class ELuActivator : IActivationFunction
 {
     private readonly double _alpha;
-    private double _beta;
 
     /// <summary>
     ///     Create an ELu activator with Alpha
@@ -20,29 +20,40 @@ public class ELuActivator : IActivationFunction
         _alpha = alpha;
     }
 
-    public double Delta { get; set; }
-
     /// <summary>
     ///     y = x if x > 0
     ///     y = Alpha * (e^x - 1)
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        _beta = input > 0 ? input : _alpha * (Math.Pow(Math.E, input) - 1);
-        Delta = Derive(input);
-        return _beta;
+        var beta = input > 0 ? input : _alpha * (Math.Pow(Math.E, input) - 1);
+        return (beta, Derive(input, beta));
     }
+
+    // public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs)
+    // {
+    //     var zeroMaximums = inputs.PointwiseMaximum(0.0);
+    //     var zeroMinimums = inputs.PointwiseMinimum(0.0);
+    //
+    //     var e =  Vector<double>.Build.DenseOfEnumerable(inputs.Select(_ => Math.E));
+    //     var betas = zeroMaximums + _alpha * (e.PointwisePower(zeroMinimums) - 1);
+    //
+    //     var derivatives = zeroMaximums.PointwiseCeiling() + _alpha +
+    //
+    //     return (betas);
+    // }
 
     /// <summary>
     ///     y' = 1 if x > 0
     ///     y' = Alpha * (e^x - 1) + Alpha
     /// </summary>
     /// <param name="x"></param>
+    /// <param name="beta"></param>
     /// <returns></returns>
-    private double Derive(double x)
+    private double Derive(double x, double beta)
     {
-        return x >= 0 ? 1 : _beta + _alpha;
+        return x >= 0 ? 1 : beta + _alpha;
     }
 }

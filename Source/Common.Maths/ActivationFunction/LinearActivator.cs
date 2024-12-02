@@ -1,20 +1,26 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Common.Maths.ActivationFunction;
 
 public class LinearActivator : IActivationFunction
 {
-    public double Delta { get; set; }
-
     /// <summary>
     ///     y = x
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        Delta = Derive(input);
-        return input;
+        return (input, Derive(input));
+    }
+
+    public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs)
+    {
+        return (
+            inputs.PointwiseMaximum(0.0),
+            Vector<double>.Build.DenseOfEnumerable(inputs.Select(_ => 1.0))
+        );
     }
 
     /// <summary>

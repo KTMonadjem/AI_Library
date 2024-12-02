@@ -7,32 +7,31 @@ using static Common.Maths.ActivationFunction.Interface.IActivationFunction;
 
 namespace Tests.Supervised.Learning.Ann;
 
+// TODO: More tests
+
 [TestFixture]
 public class LayerTests
 {
-    private static readonly MatrixBuilder<double> _m = Matrix<double>.Build;
-    private static readonly VectorBuilder<double> _v = Vector<double>.Build;
-    private static readonly IActivationFunction _activator = new LinearActivator();
-    private const ActivationFunction ActivationFunction = IActivationFunction
-        .ActivationFunction
-        .Linear;
+    private static readonly MatrixBuilder<double> M = Matrix<double>.Build;
+    private static readonly VectorBuilder<double> V = Vector<double>.Build;
+    private static readonly IActivationFunction ActivationFunction = new LinearActivator();
 
     private const int NumberOfNeurons = 10;
     private const int NumberOfWeights = 20;
     private const double MinWeight = -0.5;
     private const double MaxWeight = 0.75;
 
-    [TestCaseSource(nameof(_layerDataSources))]
+    [TestCaseSource(nameof(LayerDataSources))]
     public void Create_Should_CreateCorrectly(
         double[,] weightInputs,
         int numberOfNeurons,
         int numberOfWeights
     )
     {
-        var weightsMatrix = _m.DenseOfArray(weightInputs);
+        var weightsMatrix = M.DenseOfArray(weightInputs);
         var layer = Layer.Create(weightsMatrix, ActivationFunction);
-        layer.Weights.Should().BeEquivalentTo(_m.DenseOfArray(weightInputs));
-        layer.Activator.Should().Be(ActivationFunction);
+        layer.InputWeights.Should().BeEquivalentTo(M.DenseOfArray(weightInputs));
+        layer.ActivationFunction.Should().Be(ActivationFunction);
     }
 
     [TestCase(NumberOfNeurons, NumberOfWeights, MinWeight, MaxWeight)]
@@ -53,17 +52,10 @@ public class LayerTests
             ActivationFunction
         );
 
-        layer.BuildWeights();
-        layer.Neurons.Should().HaveCount(numberOfNeurons);
-        foreach (var neuron in layer.Neurons)
-        {
-            neuron.Weights.Should().HaveCount(numberOfWeights);
-            neuron.Bias.Should().BeInRange(minWeight, maxWeight);
-            foreach (var weight in neuron.Weights)
-                weight.Should().BeInRange(minWeight, maxWeight);
-        }
+        layer.InputWeights.RowCount.Should().Be(numberOfWeights);
+        layer.InputWeights.ColumnCount.Should().Be(numberOfNeurons);
 
-        layer.Activator.Should().Be(ActivationFunction);
+        layer.ActivationFunction.Should().Be(ActivationFunction);
     }
 
     [TestCase(0)]
@@ -123,41 +115,15 @@ public class LayerTests
             .WithMessage("Min weight must be less than max weight");
     }
 
-    [TestCaseSource(nameof(_layerDataSources))]
-    public void BuildWeights_Should_CorrectlyBuildNeuronWeights(
-        double[,] weightInputs,
-        int numberOfNeurons,
-        int numberOfWeights
-    )
-    {
-        var weightsMatrix = _m.DenseOfArray(weightInputs);
-        var layer = Layer.Create(weightsMatrix, ActivationFunction).BuildWeights();
-
-        layer.Neurons.Should().HaveCount(numberOfNeurons);
-        var weights = weightInputs.Cast<double>().ToList();
-        for (var i = 0; i < numberOfNeurons; i++)
-        {
-            var neuronWeights = weights.GetRange(i * numberOfWeights, numberOfWeights);
-            layer
-                .Neurons[i]
-                .Weights.Should()
-                .BeEquivalentTo(neuronWeights.GetRange(1, neuronWeights.Count - 1));
-            layer.Neurons[i].Bias.Should().Be(neuronWeights[0]);
-            layer.Neurons[i].Activator.Should().BeEquivalentTo(_activator);
-            layer.Neurons[i].Parents.Should().BeNull();
-            layer.Neurons[i].Inputs.Should().BeNull();
-        }
-    }
-
     [Test]
     public void Create_Should_ThrowException_When_WeightsAreEmpty()
     {
-        Action act = () => Layer.Create(_m.DenseOfArray(new double[,] { }), ActivationFunction);
+        Action act = () => Layer.Create(M.DenseOfArray(Array), ActivationFunction);
 
         act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
     }
 
-    private static object[] _layerDataSources =
+    private static readonly object[] LayerDataSources =
     [
         new object[]
         {
@@ -191,79 +157,5 @@ public class LayerTests
             4,
         },
     ];
-
-    [Test]
-    public void AddInputs_Should_ThrowException_When_NoInputsProvided()
-    {
-        var layer = Layer
-            .CreateWithRandomWeights(
-                NumberOfNeurons,
-                NumberOfWeights,
-                MinWeight,
-                MaxWeight,
-                ActivationFunction
-            )
-            .BuildWeights();
-        Action act = () => layer.SetInputs(_v.DenseOfArray(new double[] { }));
-
-        act.Should().Throw<ArgumentException>().WithMessage("Must have at least one input");
-    }
-
-    [Test]
-    public void AddInputs_Should_Succeed_When_InputsAreValid()
-    {
-        var inputs = new double[NumberOfNeurons];
-        for (var i = 0; i < NumberOfNeurons; i++)
-            inputs[i] = i;
-        var layer = Layer
-            .CreateWithRandomWeights(
-                NumberOfNeurons,
-                NumberOfNeurons,
-                MinWeight,
-                MaxWeight,
-                ActivationFunction
-            )
-            .BuildWeights()
-            .SetInputs(_v.DenseOfArray(inputs));
-
-        foreach (var neuron in layer.Neurons)
-            neuron.Inputs!.Should().BeEquivalentTo(inputs);
-    }
-
-    [Test]
-    public void AddParentLayer_Should_Succeed_When_ValidParents()
-    {
-        var parentCount = 2;
-        var parents = Layer
-            .CreateWithRandomWeights(parentCount, parentCount, 0, 1, ActivationFunction)
-            .BuildWeights();
-        var layer = Layer
-            .CreateWithRandomWeights(parentCount, parentCount, 0, 1, ActivationFunction)
-            .BuildWeights()
-            .AddParentLayer(parents);
-
-        foreach (var neuron in layer.Neurons)
-            neuron.Parents.Should().BeEquivalentTo(parents.Neurons);
-    }
-
-    [Test]
-    public void Clone_Should_CloneTheLayer()
-    {
-        var layer = Layer
-            .CreateWithRandomWeights(
-                NumberOfNeurons,
-                NumberOfWeights,
-                MinWeight,
-                MaxWeight,
-                ActivationFunction
-            )
-            .BuildWeights();
-        var clone = layer.Clone();
-
-        clone.Weights.Should().BeEquivalentTo(layer.Weights);
-        clone.Activator.Should().Be(layer.Activator);
-        clone.Neurons.Should().BeEmpty();
-        clone.IsBuilt.Should().BeFalse();
-        clone.HasInputs.Should().BeFalse();
-    }
+    private static readonly double[,] Array = new double[,] { };
 }

@@ -4,18 +4,15 @@ namespace Common.Maths.ActivationFunction;
 
 public class ReLuActivator : IActivationFunction
 {
-    public double Delta { get; set; }
-
     /// <summary>
     ///     y = x if x > 0
     ///     y = 0 if x < 0
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    public double Activate(double input)
+    public (double Output, double Derivative) Activate(double input)
     {
-        Delta = Derive(input);
-        return Math.Max(input, 0);
+        return (Math.Max(input, 0), Derive(input));
     }
 
     /// <summary>
