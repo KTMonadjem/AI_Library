@@ -46,7 +46,8 @@ public class AnnTests
             100,
             0.01
         ),
-        global::Learning.Supervised.Ann.Ann.Create()
+        global::Learning.Supervised.Ann.Ann.Create(),
+        4
     );
 
     [Test]
@@ -110,24 +111,15 @@ public class AnnTests
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
-        var firstLayer = Layer.CreateWithRandomWeights(
-            firstLayerSize,
-            inputsSize,
-            0,
-            1,
-            ActivationFunction
-        );
-        var secondLayer = Layer.CreateWithRandomWeights(
-            secondLayerSize,
-            firstLayerSize,
-            0,
-            1,
-            ActivationFunction
-        );
+        var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, ActivationFunction);
+        var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, ActivationFunction);
 
         var layers = new List<Layer> { firstLayer, secondLayer };
 
-        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, _trainer).Build();
+        var ann = global::Learning
+            .Supervised.Ann.Ann.Create(layers, _trainer)
+            .SetNumberOfInputs(inputsSize)
+            .Build();
         ann.Run(inputs);
 
         var act = () =>

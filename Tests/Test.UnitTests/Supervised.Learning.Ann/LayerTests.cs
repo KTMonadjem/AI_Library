@@ -34,26 +34,15 @@ public class LayerTests
         layer.ActivationFunction.Should().Be(ActivationFunction);
     }
 
-    [TestCase(NumberOfNeurons, NumberOfWeights, MinWeight, MaxWeight)]
-    [TestCase(100, 200, 0, 1)]
-    [TestCase(1, 1, 0, 10)]
-    public void CreateWithRandomWeights_Should_CreateWithRandomWeightsCorrectly(
-        int numberOfNeurons,
-        int numberOfWeights,
-        double minWeight,
-        double maxWeight
-    )
+    [TestCase(NumberOfNeurons)]
+    [TestCase(100)]
+    [TestCase(1)]
+    public void CreateWithRandomWeights_Should_CreateWithRandomWeightsCorrectly(int numberOfNeurons)
     {
-        var layer = Layer.CreateWithRandomWeights(
-            numberOfNeurons,
-            numberOfWeights,
-            minWeight,
-            maxWeight,
-            ActivationFunction
-        );
+        var layer = Layer.CreateWithRandomWeights(numberOfNeurons, ActivationFunction);
 
-        layer.InputWeights.RowCount.Should().Be(numberOfWeights);
-        layer.InputWeights.ColumnCount.Should().Be(numberOfNeurons);
+        // layer.InputWeights.RowCount.Should().Be(numberOfWeights);
+        layer.NumberOfNeurons.Should().Be(numberOfNeurons);
 
         layer.ActivationFunction.Should().Be(ActivationFunction);
     }
@@ -64,55 +53,9 @@ public class LayerTests
         int numberOfNeurons
     )
     {
-        Action act = () =>
-            Layer.CreateWithRandomWeights(
-                numberOfNeurons,
-                NumberOfWeights,
-                MinWeight,
-                MaxWeight,
-                ActivationFunction
-            );
+        Action act = () => Layer.CreateWithRandomWeights(numberOfNeurons, ActivationFunction);
 
         act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with neurons");
-    }
-
-    [TestCase(0)]
-    [TestCase(-10)]
-    public void CreateWithRandomWeights_Should_ThrowException_When_TooFewWeights(
-        int numberOfWeights
-    )
-    {
-        Action act = () =>
-            Layer.CreateWithRandomWeights(
-                NumberOfNeurons,
-                numberOfWeights,
-                MinWeight,
-                MaxWeight,
-                ActivationFunction
-            );
-
-        act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
-    }
-
-    [TestCase(5, 0)]
-    [TestCase(0.1, -0.1)]
-    public void CreateWithRandomWeights_Should_ThrowException_When_MinWeightLessThanMaxWeight(
-        double minWeight,
-        double maxWeight
-    )
-    {
-        Action act = () =>
-            Layer.CreateWithRandomWeights(
-                NumberOfNeurons,
-                NumberOfWeights,
-                minWeight,
-                maxWeight,
-                ActivationFunction
-            );
-
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage("Min weight must be less than max weight");
     }
 
     [Test]

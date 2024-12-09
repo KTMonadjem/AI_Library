@@ -9,23 +9,26 @@ namespace Learning.Supervised.Ann.Algorithm;
 public class BackPropagationWithGradientDescent : ITrainer
 {
     private readonly Ann _ann;
+    private readonly int _batchSize;
 
     public BackPropagationWithGradientDescent(
         ILearningRate learningRate,
         ILossFunction lossFunction,
         SupervisedLearningData data,
-        Ann ann
+        Ann ann,
+        int batchSize
     )
     {
         LearningRate = learningRate;
         LossFunction = lossFunction;
         Data = data;
         _ann = ann;
+        _batchSize = batchSize;
     }
 
-    public SupervisedLearningData Data { get; private init; }
-    public ILearningRate LearningRate { get; private init; }
-    public ILossFunction LossFunction { get; private init; }
+    private SupervisedLearningData Data { get; init; }
+    private ILearningRate LearningRate { get; init; }
+    private ILossFunction LossFunction { get; init; }
 
     public void Train()
     {
@@ -34,12 +37,20 @@ public class BackPropagationWithGradientDescent : ITrainer
             if (!_ann.HasBeenBuilt)
                 throw new InvalidOperationException("Cannot train Ann before building.");
 
+            var batchCount = 0;
+            var batchLoss = 0.0;
             for (var epoch = 0; epoch < Data.MaxEpochs; epoch++)
             {
                 var loss = TrainOnce(epoch);
 
-                if (loss < Data.MinError)
-                    return;
+                batchLoss += loss;
+                if (batchCount == _batchSize)
+                {
+                    batchCount = 0;
+                    if (batchLoss / _batchSize < Data.MinError)
+                        return;
+                    batchLoss = 0;
+                }
             }
         }
         catch (Exception e)
@@ -54,8 +65,7 @@ public class BackPropagationWithGradientDescent : ITrainer
 
         var (inputs, expectedOutputs) = Data.GetInputsOutputs(epoch);
 
-        if (!_ann.HasRun)
-            _ann.Run(inputs);
+        _ann.Run(inputs);
 
         // Perform gradient descent (via backprop)
         var currentLayer = _ann.Layers.Last();
@@ -115,14 +125,14 @@ public class BackPropagationWithGradientDescent : ITrainer
             var currentDeltas =
                 currentLayer.Deltas
                 ?? Matrix<double>.Build.Dense(
-                    currentLayer.InputWeights.RowCount,
+                    currentLayer.InputWeights!.RowCount,
                     currentLayer.InputWeights.ColumnCount,
                     0.0
                 );
 
             // Calculate delta matrix
             var rowDeltas = new List<Vector<double>>();
-            for (var row = 0; row < currentLayer.InputWeights.RowCount; row++)
+            for (var row = 0; row < currentLayer.InputWeights!.RowCount; row++)
             {
                 rowDeltas.Add(
                     currentLayer.Inputs.Multiply(LearningRate.Apply(currentLayer.Gradients![row]))

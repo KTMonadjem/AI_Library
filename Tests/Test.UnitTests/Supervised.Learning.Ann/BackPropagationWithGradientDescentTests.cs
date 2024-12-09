@@ -28,39 +28,21 @@ public class BackPropagationWithGradientDescentTests
                     { 1, 1, 0, 0 },
                 }
             ),
-            100,
+            1000,
             0.01
         );
         var ann = global::Learning.Supervised.Ann.Ann.Create();
-        ann.AddLayer(
-                Layer.Create(
-                    Matrix<double>.Build.DenseOfArray(
-                        new[,]
-                        {
-                            { 0.1, 0.2, 0.3 },
-                            { 0.4, 0.5, 0.6 },
-                        }
-                    ),
-                    new ReLuActivator()
-                )
-            )
-            .AddLayer(
-                Layer.Create(
-                    Matrix<double>.Build.DenseOfArray(
-                        new[,]
-                        {
-                            { 0.7, 0.8, 0.9 },
-                        }
-                    ),
-                    new SigmoidActivator()
-                )
-            )
+        ann.AddLayer(Layer.CreateWithRandomWeights(3, new SigmoidActivator()))
+            .AddLayer(Layer.CreateWithRandomWeights(4, new SigmoidActivator()))
+            .AddLayer(Layer.CreateWithRandomWeights(1, new SigmoidActivator()))
+            .SetNumberOfInputs(2)
             .SetTrainer(
                 new BackPropagationWithGradientDescent(
-                    new FlatLearningRate(0.9),
+                    new FlatLearningRate(0.01),
                     new MeanSquaredError(),
                     trainingData,
-                    ann
+                    ann,
+                    4
                 )
             )
             .Build();
@@ -69,7 +51,7 @@ public class BackPropagationWithGradientDescentTests
 
         for (var i = 0; i < trainingData.NumberOfInputs; i++)
         {
-            var (inputs, outputs) = trainingData.GetInputsOutputs(i);
+            var (inputs, _) = trainingData.GetInputsOutputs(i);
 
             ann.Run(inputs);
 

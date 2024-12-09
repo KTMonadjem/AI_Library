@@ -8,6 +8,7 @@ public class Ann
 {
     private Vector<double> _outputs = null!;
     private ITrainer _trainer = null!;
+    private static readonly Random R = new();
 
     private Ann() { }
 
@@ -18,14 +19,15 @@ public class Ann
     }
 
     public List<Layer> Layers { get; } = [];
-    public bool HasRun { get; private set; }
     public bool HasBeenBuilt { get; private set; }
+
+    public int? NumberOfInputs { get; private set; }
 
     public Vector<double> Outputs
     {
         get
         {
-            if (!HasRun)
+            if (_outputs is null)
                 throw new InvalidOperationException(
                     "Learning.Supervised.Ann must be run before before outputs can be read"
                 );
@@ -43,8 +45,10 @@ public class Ann
             throw new InvalidOperationException(
                 "Learning.Supervised.Ann must be built before being run"
             );
-        if (inputs.Count == 0)
-            throw new InvalidOperationException("Learning.Supervised.Ann must have inputs to run");
+        if (inputs.Count != NumberOfInputs)
+            throw new InvalidOperationException(
+                $"Learning.Supervised.Ann must have the correct number of inputs: Expected: {NumberOfInputs}, Actual: {inputs.Count}"
+            );
 
         // Run first layer with inputs
         Layers.First().Activate(inputs);
@@ -56,8 +60,6 @@ public class Ann
         _outputs =
             Layers.Last().Outputs
             ?? throw new InvalidOperationException("Failed to retrieve final layer output vector");
-
-        HasRun = true;
     }
 
     public static Ann Create()
@@ -73,7 +75,6 @@ public class Ann
     public Ann AddLayer(Layer layer)
     {
         HasBeenBuilt = false;
-        HasRun = false;
         Layers.Add(layer);
         return this;
     }
@@ -88,6 +89,12 @@ public class Ann
     public Ann SetTrainer(ITrainer trainer)
     {
         _trainer = trainer;
+        return this;
+    }
+
+    public Ann SetNumberOfInputs(int numberOfInputs)
+    {
+        NumberOfInputs = numberOfInputs;
         return this;
     }
 
@@ -109,6 +116,15 @@ public class Ann
         Layer? previous = null;
         foreach (var layer in Layers)
         {
+            if (layer.InputWeights is null)
+            {
+                layer.InputWeights = Matrix<double>.Build.Dense(
+                    layer.NumberOfNeurons,
+                    (previous?.NumberOfNeurons ?? NumberOfInputs!.Value) + 1,
+                    (_, _) => R.NextDouble()
+                );
+            }
+
             if (previous is not null)
             {
                 previous.SetOutputLayer(layer);
