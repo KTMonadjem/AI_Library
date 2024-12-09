@@ -11,7 +11,7 @@ public class FlatLearningRate : ILearningRate
         _alpha = alpha;
     }
 
-    public double ApplyLearningRate(double errorSignal)
+    public double Apply(double errorSignal)
     {
         return _alpha * errorSignal;
     }

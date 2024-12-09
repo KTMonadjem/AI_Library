@@ -2,5 +2,5 @@
 
 public interface ILearningRate
 {
-    public double ApplyLearningRate(double errorSignal);
+    public double Apply(double errorSignal);
 }

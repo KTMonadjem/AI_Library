@@ -8,6 +8,8 @@ public class SupervisedLearningData
     private readonly Matrix<double> _outputs;
     private readonly bool _canLoopData;
 
+    public int NumberOfInputs => _inputs.ColumnCount;
+
     public SupervisedLearningData(
         Matrix<double> inputs,
         Matrix<double> outputs,

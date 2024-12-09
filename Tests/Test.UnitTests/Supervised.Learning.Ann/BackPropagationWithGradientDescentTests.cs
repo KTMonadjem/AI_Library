@@ -14,6 +14,23 @@ public class BackPropagationWithGradientDescentTests
     [Test]
     public void BackPropagationWithGradientDescent_()
     {
+        var trainingData = new SupervisedLearningData(
+            Matrix<double>.Build.DenseOfArray(
+                new double[,]
+                {
+                    { 0, 1, 1, 0 },
+                    { 1, 0, 1, 0 },
+                }
+            ),
+            Matrix<double>.Build.DenseOfArray(
+                new double[,]
+                {
+                    { 1, 1, 0, 0 },
+                }
+            ),
+            100,
+            0.01
+        );
         var ann = global::Learning.Supervised.Ann.Ann.Create();
         ann.AddLayer(
                 Layer.Create(
@@ -32,7 +49,7 @@ public class BackPropagationWithGradientDescentTests
                     Matrix<double>.Build.DenseOfArray(
                         new[,]
                         {
-                            { 0.7, 0.8 },
+                            { 0.7, 0.8, 0.9 },
                         }
                     ),
                     new SigmoidActivator()
@@ -40,35 +57,25 @@ public class BackPropagationWithGradientDescentTests
             )
             .SetTrainer(
                 new BackPropagationWithGradientDescent(
-                    new FlatLearningRate(0.99),
+                    new FlatLearningRate(0.9),
                     new MeanSquaredError(),
-                    new SupervisedLearningData(
-                        Matrix<double>.Build.DenseOfArray(
-                            new double[,]
-                            {
-                                { 0, 0 },
-                                { 0, 1 },
-                                { 1, 0 },
-                                { 1, 1 },
-                            }
-                        ),
-                        Matrix<double>.Build.DenseOfArray(
-                            new double[,]
-                            {
-                                { 0 },
-                                { 1 },
-                                { 1 },
-                                { 0 },
-                            }
-                        ),
-                        100,
-                        0.01
-                    ),
+                    trainingData,
                     ann
                 )
             )
             .Build();
 
         ann.Train();
+
+        for (var i = 0; i < trainingData.NumberOfInputs; i++)
+        {
+            var (inputs, outputs) = trainingData.GetInputsOutputs(i);
+
+            ann.Run(inputs);
+
+            Console.WriteLine(
+                $"Inputs: [{string.Join(",", inputs)}] -> Outputs: [{string.Join(",", ann.Outputs)}]"
+            );
+        }
     }
 }

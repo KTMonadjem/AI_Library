@@ -14,13 +14,13 @@ public class Layer
     public Layer? InputLayer { get; private set; }
     public Layer? OutputLayer { get; private set; }
 
-    public Weights InputWeights { get; private set; }
+    public Weights InputWeights { get; set; }
     public Weights? OutputWeights => OutputLayer?.InputWeights;
 
     public IActivationFunction ActivationFunction { get; private set; }
 
-    public Vector<double>? Deltas { get; private set; }
-    public Vector<double>? Gradients { get; private set; }
+    public Matrix<double>? Deltas { get; set; }
+    public Vector<double>? Gradients { get; set; }
 
     public Vector<double>? Inputs { get; private set; }
     public Vector<double>? Outputs { get; private set; }
@@ -91,9 +91,9 @@ public class Layer
     {
         Inputs = inputs ?? InputLayer?.Outputs ?? throw new ArgumentNullException(nameof(inputs));
 
-        var inputsWithBias = Inputs.Add(1);
+        Inputs = Vector<double>.Build.DenseOfEnumerable(Inputs.Append(1.0));
 
-        var summedInputs = InputWeights.Multiply(inputsWithBias);
+        var summedInputs = InputWeights.Multiply(Inputs);
 
         // TODO: Vector activation operations
         var activations = new double[summedInputs.Count];
