@@ -2,5 +2,12 @@
 
 public interface ITrainer
 {
-    public void Train();
+    public record TrainingOutput
+    {
+        public double Loss { get; set; }
+
+        public int Epochs { get; set; }
+    }
+
+    public TrainingOutput Train();
 }

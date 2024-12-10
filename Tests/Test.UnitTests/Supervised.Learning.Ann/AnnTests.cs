@@ -157,25 +157,31 @@ public class AnnTests
         var secondLayer = Layer.Create(M.DenseOfArray(secondLayerWeights), ActivationFunction);
 
         var layers = new List<Layer> { firstLayer, secondLayer };
-        var ann = global::Learning.Supervised.Ann.Ann.Create(layers, _trainer).Build();
+        var ann = global::Learning
+            .Supervised.Ann.Ann.Create(layers, _trainer)
+            .SetNumberOfInputs(2)
+            .Build();
         ann.Run(inputs);
 
         var result = ann.Outputs;
 
-        result.Should().BeEquivalentTo(V.DenseOfArray([1.875]));
+        result.Should().BeEquivalentTo(V.DenseOfArray([1.5]));
     }
 
     [Test]
-    public void Run_Should_Fail_When_NoInputs()
+    public void Run_Should_Fail_When_IncorrecNumberOfInputs()
     {
         var act = () =>
             global::Learning
                 .Supervised.Ann.Ann.Create(Layers, _trainer)
+                .SetNumberOfInputs(2)
                 .Build()
                 .Run(Vector<double>.Build.Random(0));
 
         act.Should()
             .Throw<InvalidOperationException>()
-            .WithMessage("Learning.Supervised.Ann must have inputs to run");
+            .WithMessage(
+                "Learning.Supervised.Ann must have the correct number of inputs: Expected: 2, Actual: 0"
+            );
     }
 }

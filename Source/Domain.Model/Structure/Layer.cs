@@ -1,4 +1,5 @@
-﻿using Common.Maths.ActivationFunction.Interface;
+﻿using System.Text;
+using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace Learning.Supervised.Ann.Structure;
@@ -96,5 +97,19 @@ public class Layer
 
         Outputs = VectorBuilder.DenseOfArray(activations);
         Derivatives = VectorBuilder.DenseOfArray(derivatives);
+    }
+
+    public override string ToString()
+    {
+        if (InputWeights is null)
+            return string.Empty;
+
+        var sb = new StringBuilder();
+        foreach (var row in InputWeights.EnumerateRows())
+        {
+            sb.AppendLine($"[{string.Join(",", row)}],");
+        }
+
+        return sb.ToString();
     }
 }

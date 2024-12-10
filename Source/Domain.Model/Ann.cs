@@ -1,4 +1,5 @@
-﻿using Learning.Supervised.Ann.Structure;
+﻿using System.Text;
+using Learning.Supervised.Ann.Structure;
 using Learning.Supervised.Training.Algorithm.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -141,8 +142,21 @@ public class Ann
     /// <summary>
     ///     Trains the Learning.Supervised.Ann using the trainer
     /// </summary>
-    public void Train()
+    public ITrainer.TrainingOutput Train()
     {
-        _trainer.Train();
+        return _trainer.Train();
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        foreach (var layer in Layers)
+        {
+            sb.Append(layer);
+            sb.AppendLine("|".PadLeft(10));
+            sb.AppendLine("|".PadLeft(10));
+        }
+
+        return sb.ToString();
     }
 }

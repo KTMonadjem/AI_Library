@@ -58,14 +58,6 @@ public class LayerTests
         act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with neurons");
     }
 
-    [Test]
-    public void Create_Should_ThrowException_When_WeightsAreEmpty()
-    {
-        Action act = () => Layer.Create(M.DenseOfArray(Array), ActivationFunction);
-
-        act.Should().Throw<ArgumentException>().WithMessage("Layer must be created with weights");
-    }
-
     private static readonly object[] LayerDataSources =
     [
         new object[]

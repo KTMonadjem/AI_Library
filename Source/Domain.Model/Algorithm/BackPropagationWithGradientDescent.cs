@@ -30,28 +30,34 @@ public class BackPropagationWithGradientDescent : ITrainer
     private ILearningRate LearningRate { get; init; }
     private ILossFunction LossFunction { get; init; }
 
-    public void Train()
+    public ITrainer.TrainingOutput Train()
     {
         try
         {
             if (!_ann.HasBeenBuilt)
                 throw new InvalidOperationException("Cannot train Ann before building.");
 
+            // TODO: Implement proper batch updates
+
             var batchCount = 0;
             var batchLoss = 0.0;
-            for (var epoch = 0; epoch < Data.MaxEpochs; epoch++)
+            var epoch = 0;
+            for (; epoch < Data.MaxEpochs; epoch++)
             {
                 var loss = TrainOnce(epoch);
 
                 batchLoss += loss;
+                batchCount++;
                 if (batchCount == _batchSize)
                 {
                     batchCount = 0;
                     if (batchLoss / _batchSize < Data.MinError)
-                        return;
+                        break;
                     batchLoss = 0;
                 }
             }
+
+            return new ITrainer.TrainingOutput { Loss = batchLoss / _batchSize, Epochs = epoch };
         }
         catch (Exception e)
         {
