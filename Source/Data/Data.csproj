@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>latestmajor</LangVersion>
+        <LangVersion>default</LangVersion>
         <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 

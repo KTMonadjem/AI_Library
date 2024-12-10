@@ -1,160 +1,115 @@
-﻿using Common.Maths.ActivationFunction.Interface;
+﻿using System.Text;
+using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
-using SupervisedLearning.ANN.Neuron;
 
-namespace ANN.Structure.Layer
+namespace Learning.Supervised.Ann.Structure;
+
+// Weights are row-wise per neuron, column-wise per input. Last column is the bias.
+using Weights = Matrix<double>;
+
+public class Layer
 {
-    public class Layer
+    public int NumberOfNeurons { get; private set; }
+
+    private static readonly Random Random = new Random();
+    private static readonly VectorBuilder<double> VectorBuilder = Vector<double>.Build;
+
+    public Layer? InputLayer { get; private set; }
+    public Layer? OutputLayer { get; private set; }
+
+    public Weights? InputWeights { get; set; }
+    public Weights? OutputWeights => OutputLayer?.InputWeights;
+
+    public IActivationFunction ActivationFunction { get; private set; }
+
+    public Matrix<double>? Deltas { get; set; }
+    public Vector<double>? Gradients { get; set; }
+
+    public Vector<double>? Inputs { get; private set; }
+    public Vector<double>? Outputs { get; private set; }
+    public Vector<double>? Derivatives { get; private set; }
+
+    private Layer(Weights inputWeights, IActivationFunction activationFunction)
     {
-        private static readonly Random _random = new Random();
+        InputWeights = inputWeights;
+        NumberOfNeurons = inputWeights.RowCount;
+        ActivationFunction = activationFunction;
+    }
 
-        public List<Neuron> Neurons { get; }
-        public Matrix<double> Weights { get; private set; } 
-        public IActivationFunction Activator { get; }
-        public bool IsBuilt { get; private set; } = false;
-        public bool HasInputs { get; private set; } = false;
+    private Layer(int numberOfNeurons, IActivationFunction activationFunction)
+    {
+        NumberOfNeurons = numberOfNeurons;
+        ActivationFunction = activationFunction;
+    }
 
-        private Layer(Matrix<double> weights, IActivationFunction activator)
+    public static Layer Create(Weights inputWeights, IActivationFunction activationFunction)
+    {
+        return new Layer(inputWeights, activationFunction);
+    }
+
+    /// <summary>
+    ///     Creates a layer with randomized weights. Additionally creates bias weights.
+    /// </summary>
+    /// <param name="numberOfNeurons"></param>
+    /// <param name="activationFunction"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static Layer CreateWithRandomWeights(
+        int numberOfNeurons,
+        IActivationFunction activationFunction
+    )
+    {
+        if (numberOfNeurons <= 0)
+            throw new ArgumentException("Layer must be created with neurons");
+
+        return new Layer(numberOfNeurons, activationFunction);
+    }
+
+    public Layer SetInputLayer(Layer layer)
+    {
+        InputLayer = layer;
+        return this;
+    }
+
+    public Layer SetOutputLayer(Layer layer)
+    {
+        OutputLayer = layer;
+        return this;
+    }
+
+    public void Activate(Vector<double>? inputs = null)
+    {
+        Inputs = inputs ?? InputLayer?.Outputs ?? throw new ArgumentNullException(nameof(inputs));
+
+        Inputs = Vector<double>.Build.DenseOfEnumerable(Inputs.Append(1.0));
+
+        var summedInputs = InputWeights!.Multiply(Inputs);
+
+        // TODO: Vector activation operations
+        var activations = new double[summedInputs.Count];
+        var derivatives = new double[summedInputs.Count];
+        for (var neuron = 0; neuron < summedInputs.Count; neuron++)
         {
-            Neurons = new List<Neuron>();
-            Weights = weights;
-            Activator = activator;
+            (activations[neuron], derivatives[neuron]) = ActivationFunction.Activate(
+                summedInputs[neuron]
+            );
         }
 
-        public static Layer Create(Matrix<double> weights, IActivationFunction activator) 
-        { 
-            if (weights.ColumnCount <= 0 && weights.RowCount <= 0)
-            {
-                throw new ArgumentException("Layer must be created with weights");
-            }
-            return new Layer(weights, activator); 
-        }
+        Outputs = VectorBuilder.DenseOfArray(activations);
+        Derivatives = VectorBuilder.DenseOfArray(derivatives);
+    }
 
-        /// <summary>
-        /// Creates a layer with randomized weights. Additionally creates bias weights.
-        /// </summary>
-        /// <param name="numberOfNeurons"></param>
-        /// <param name="numberOfWeights">The number of weights minus the bias weight</param>
-        /// <param name="minWeight"></param>
-        /// <param name="maxWeight"></param>
-        /// <param name="activator"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static Layer CreateWithRandomWeights(int numberOfNeurons, int numberOfWeights, double minWeight, double maxWeight, IActivationFunction activator)
+    public override string ToString()
+    {
+        if (InputWeights is null)
+            return string.Empty;
+
+        var sb = new StringBuilder();
+        foreach (var row in InputWeights.EnumerateRows())
         {
-            if (numberOfNeurons <= 0)
-            {
-                throw new ArgumentException("Layer must be created with neurons");
-            }
-            if (numberOfWeights <= 0)
-            {
-                throw new ArgumentException("Layer must be created with weights");
-            }
-
-            if (minWeight > maxWeight)
-            {
-                throw new ArgumentException("Min weight must be less than max weight");
-            }
-
-            // Add the bias neuron
-            numberOfWeights++;
-
-            var weights = new double[numberOfNeurons,numberOfWeights];
-            for (int i = 0; i < numberOfNeurons; i++)
-            {
-                for (int j = 0; j < numberOfWeights; j++)
-                {
-                    // Assign a randomly generated weight
-                    weights[i,j] = _random.NextDouble() * (maxWeight - minWeight) + minWeight;
-                }
-            }
-
-            return Create(Matrix<double>.Build.DenseOfArray(weights), activator);
+            sb.AppendLine($"[{string.Join(",", row)}],");
         }
 
-        /// <summary>
-        /// Builds the weights for this layer from the weight matrix
-        /// </summary>
-        /// <returns></returns>
-        public Layer BuildWeights()
-        {
-            for (var i = 0; i < Weights.RowCount; i++)
-            {
-                var weights = Weights.Row(i);
-                if (weights.Count == 0)
-                {
-                    continue;
-                }
-
-                var bias = weights[0];
-                weights = weights.SubVector(1, weights.Count - 1);
-                Neurons.Add(Neuron.Create(weights, bias, Activator.Activate));
-            }
-
-            IsBuilt = true;
-            return this;
-        }
-
-        /// <summary>
-        /// Add inputs to the neurons in this layer
-        /// </summary>
-        /// <param name="inputs"></param>
-        /// <returns></returns>
-        public Layer AddInputs(Vector<double> inputs)
-        {
-            if (!inputs.Any())
-            {
-                throw new ArgumentException("Must have at least one input");
-            }
-
-            foreach (var neuron in Neurons)
-            {
-                neuron.SetInputs(inputs);
-            }
-
-            HasInputs = true;
-            return this;
-        }
-
-        /// <summary>
-        /// Link a set of parent neurons to the neurons in the layer.
-        /// This does fully connected mapping.
-        /// </summary>
-        /// <param name="parents"></param>
-        /// <returns></returns>
-        public Layer AddParents(List<Neuron> parents)
-        {
-            if (!parents.Any())
-            {
-                throw new ArgumentException("Parents must be provided to add parents to this layer");
-            }
-
-            foreach (var neuron in Neurons)
-            {
-                neuron.SetParents(parents);
-            }
-
-            HasInputs = true;
-            return this;
-        }
-
-        /// <summary>
-        /// Adds another layer's neurons as the parents of the current layer
-        /// </summary>
-        /// <param name="layer"></param>
-        /// <returns></returns>
-        public Layer AddParentLayer(Layer layer)
-        {
-            return AddParents(layer.Neurons);
-        }
-
-        /// <summary>
-        /// Deep copy this layer
-        /// </summary>
-        /// <returns></returns>
-        public Layer Clone()
-        {
-            return Create(Weights.Clone(), Activator);
-        }
+        return sb.ToString();
     }
 }

@@ -1,17 +1,28 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Common.Maths.ActivationFunction
+namespace Common.Maths.ActivationFunction;
+
+public class ReLuActivator : IActivationFunction
 {
-    public class ReLuActivator : IActivationFunction
+    /// <summary>
+    ///     y = x if x > 0
+    ///     y = 0 if x < 0
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public (double Output, double Derivative) Activate(double input)
     {
-        public double Activate(double input)
-        {
-            return Math.Max(input, 0);
-        }
+        return (Math.Max(input, 0), Derive(input));
+    }
+
+    /// <summary>
+    ///     y' = 1 if x >= 0
+    ///     y' = 0 if x < 0
+    /// </summary>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    private static double Derive(double x)
+    {
+        return x >= 0 ? 1 : 0;
     }
 }

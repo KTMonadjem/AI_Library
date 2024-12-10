@@ -1,18 +1,30 @@
 ﻿using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Common.Maths.ActivationFunction
+namespace Common.Maths.ActivationFunction;
+
+public class TanhActivator : IActivationFunction
 {
-    public class TanhActivator : IActivationFunction
+    public double Delta { get; private set; }
+
+    /// <summary>
+    ///     y = tanh(x)
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public (double Output, double Derivative) Activate(double input)
     {
-        public double Activate(double input)
-        {
-            return Trig.Tanh(input);
-        }
+        var tanh = Trig.Tanh(input);
+        return (tanh, Derive(tanh));
+    }
+
+    /// <summary>
+    ///     y' = 1 - tanh^2(x)
+    /// </summary>
+    /// <param name="tanh"></param>
+    /// <returns></returns>
+    private static double Derive(double tanh)
+    {
+        return 1 - Math.Pow(tanh, 2);
     }
 }

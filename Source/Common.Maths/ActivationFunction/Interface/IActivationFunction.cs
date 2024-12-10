@@ -1,13 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MathNet.Numerics.LinearAlgebra;
 
-namespace Common.Maths.ActivationFunction.Interface
+namespace Common.Maths.ActivationFunction.Interface;
+
+public interface IActivationFunction
 {
-    public interface IActivationFunction
+    public enum ActivationFunction
     {
-        public abstract double Activate(double input);
+        Binary,
+        Linear,
+        ReLu,
+        LeakyReLu,
+        ELu,
+        Sigmoid,
+        Tanh,
+        Swish,
+        Softmax,
     }
+
+    public (double Output, double Derivative) Activate(double input);
+
+    // TODO: Implement vector activations
+    // public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs);
 }
