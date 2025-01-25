@@ -2,7 +2,7 @@
 using Common.Maths.ActivationFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Learning.Supervised.Ann.Structure;
+namespace Learning.Supervised.ArtificialNeuralNetwork.Structure;
 
 using Weights = Matrix<double>;
 

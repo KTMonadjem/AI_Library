@@ -1,14 +1,14 @@
 ﻿using Common.Maths.ActivationFunction;
-using Common.Maths.ActivationFunction.Interface;
 using FluentAssertions;
-using Learning.Supervised.Ann.Algorithm;
-using Learning.Supervised.Ann.Structure;
+using Learning.Supervised.ArtificialNeuralNetwork;
+using Learning.Supervised.ArtificialNeuralNetwork.Algorithm;
+using Learning.Supervised.ArtificialNeuralNetwork.Structure;
 using Learning.Supervised.Training.Data;
 using Learning.Supervised.Training.LearningRate;
 using Learning.Supervised.Training.LossFunction;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Tests.Supervised.Learning.Ann;
+namespace Tests.Supervised.Learning.ArtificialNeuralNetwork;
 
 public class BackPropagationWithGradientDescentTests
 {
@@ -32,9 +32,8 @@ public class BackPropagationWithGradientDescentTests
             1000,
             0.01
         );
-        var ann = global::Learning.Supervised.Ann.Ann.Create();
-
-        ann.AddLayer(
+        var ann = Ann.Create()
+            .AddLayer(
                 Layer.Create(
                     Matrix<double>.Build.DenseOfArray(
                         new[,]
@@ -57,19 +56,17 @@ public class BackPropagationWithGradientDescentTests
                     new ReLuActivator()
                 )
             )
-            .SetNumberOfInputs(2)
-            .SetTrainer(
-                new BackPropagationWithGradientDescent(
-                    new FlatLearningRate(0.2),
-                    new MeanSquaredError(),
-                    trainingData,
-                    ann, // TODO: Fix passing the ANN to the trainer and the trainer passing into the ANN
-                    4
-                )
-            )
             .Build();
 
-        var trainingOutput = ann.Train();
+        var trainer = new BackPropagationWithGradientDescent(
+            new FlatLearningRate(0.2),
+            new MeanSquaredError(),
+            trainingData,
+            ann,
+            4
+        );
+
+        var trainingOutput = trainer.Train();
 
         trainingOutput.Loss.Should().BeApproximately(0.008636684851844992, 0.000001);
         trainingOutput.Epochs.Should().Be(435);

@@ -4,7 +4,7 @@ using Learning.Supervised.Training.LearningRate.Interface;
 using Learning.Supervised.Training.LossFunction.Interface;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Learning.Supervised.Ann.Algorithm;
+namespace Learning.Supervised.ArtificialNeuralNetwork.Algorithm;
 
 public class BackPropagationWithGradientDescent : ITrainer
 {
@@ -35,7 +35,9 @@ public class BackPropagationWithGradientDescent : ITrainer
         try
         {
             if (!_ann.HasBeenBuilt)
-                throw new InvalidOperationException("Cannot train Ann before building.");
+                throw new InvalidOperationException(
+                    "Cannot train ArtificialNeuralNetwork before building."
+                );
 
             // TODO: Implement proper batch updates
 
@@ -61,7 +63,10 @@ public class BackPropagationWithGradientDescent : ITrainer
         }
         catch (Exception e)
         {
-            throw new Exception("Error running the Ann during gradient descent: ", e);
+            throw new Exception(
+                "Error running the ArtificialNeuralNetwork during gradient descent: ",
+                e
+            );
         }
     }
 
