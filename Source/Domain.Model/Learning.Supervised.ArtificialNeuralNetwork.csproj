@@ -5,7 +5,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
-        <RootNamespace>Learning.Supervised.ArtificialNeuralNetwork</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Training\Training.csproj" />
+        <ProjectReference Include="..\..\Learning.Supervised.Training\Learning.Supervised.Training.csproj" />
         <ProjectReference Include="..\Common.Maths\Common.Maths.csproj"/>
         <ProjectReference Include="..\Data\Data.csproj"/>
     </ItemGroup>

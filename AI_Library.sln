@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Maths", "Source\Common.Maths\Common.Maths.csproj", "{E319C933-F479-41E0-9736-F6E38D5768FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArtificialNeuralNetwork", "Source\Domain.Model\ArtificialNeuralNetwork.csproj", "{2BB85ED6-EAB2-474D-B309-5DBE74F26D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Supervised.ArtificialNeuralNetwork", "Source\Domain.Model\Learning.Supervised.ArtificialNeuralNetwork.csproj", "{2BB85ED6-EAB2-474D-B309-5DBE74F26D53}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.UnitTests", "Tests\Test.UnitTests\Test.UnitTests.csproj", "{03340D7E-ADFA-4B4F-9DCB-7EC717CFFDC3}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1BBA29
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Learning.Supervised", "Learning.Supervised", "{0B5221D9-7C84-417D-B0A1-85DF48CA2B12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Training", "Training\Training.csproj", "{8F7E0C9B-DB7B-47E9-A1D9-8C06CCA66400}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Supervised.Training", "Learning.Supervised.Training\Learning.Supervised.Training.csproj", "{8F7E0C9B-DB7B-47E9-A1D9-8C06CCA66400}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E7A2C850-9633-4BAF-A4D4-1EB2324D84D9}"
 EndProject

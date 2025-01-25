@@ -15,6 +15,8 @@ public class BackPropagationWithGradientDescent : ITrainer
     private readonly ILearningRate _learningRate;
     private readonly ILossFunction _lossFunction;
 
+    // TODO: Add trainer builder
+
     public BackPropagationWithGradientDescent(
         ILearningRate learningRate,
         ILossFunction lossFunction,
@@ -35,9 +37,7 @@ public class BackPropagationWithGradientDescent : ITrainer
         try
         {
             if (!_ann.HasBeenBuilt)
-                throw new InvalidOperationException(
-                    "Cannot train ArtificialNeuralNetwork before building."
-                );
+                throw new InvalidOperationException("Cannot train ANN before building.");
 
             // TODO: Implement proper batch updates
 
@@ -63,10 +63,7 @@ public class BackPropagationWithGradientDescent : ITrainer
         }
         catch (Exception e)
         {
-            throw new Exception(
-                "Error running the ArtificialNeuralNetwork during gradient descent: ",
-                e
-            );
+            throw new Exception("Error running the ANN during gradient descent: ", e);
         }
     }
 

@@ -3,6 +3,8 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace Learning.Supervised.Training.LossFunction;
 
+// TODO: Add vector operations
+
 public class MeanSquaredError : ILossFunction
 {
     public double CalculateLoss(Vector<double> expected, Vector<double> actual)
