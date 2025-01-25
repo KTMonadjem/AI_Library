@@ -5,8 +5,6 @@ namespace Common.Maths.ActivationFunction;
 
 public class SoftmaxActivator : IActivationFunction
 {
-    public double Delta { get; private set; }
-
     /// <summary>
     ///     y = sigmoid(x)
     /// </summary>

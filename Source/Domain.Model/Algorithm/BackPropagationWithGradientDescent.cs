@@ -11,6 +11,10 @@ public class BackPropagationWithGradientDescent : ITrainer
     private readonly Ann _ann;
     private readonly int _batchSize;
 
+    private readonly SupervisedLearningData _data;
+    private readonly ILearningRate _learningRate;
+    private readonly ILossFunction _lossFunction;
+
     public BackPropagationWithGradientDescent(
         ILearningRate learningRate,
         ILossFunction lossFunction,
@@ -19,16 +23,12 @@ public class BackPropagationWithGradientDescent : ITrainer
         int batchSize
     )
     {
-        LearningRate = learningRate;
-        LossFunction = lossFunction;
-        Data = data;
+        _learningRate = learningRate;
+        _lossFunction = lossFunction;
+        _data = data;
         _ann = ann;
         _batchSize = batchSize;
     }
-
-    private SupervisedLearningData Data { get; init; }
-    private ILearningRate LearningRate { get; init; }
-    private ILossFunction LossFunction { get; init; }
 
     public ITrainer.TrainingOutput Train()
     {
@@ -42,7 +42,7 @@ public class BackPropagationWithGradientDescent : ITrainer
             var batchCount = 0;
             var batchLoss = 0.0;
             var epoch = 0;
-            for (; epoch < Data.MaxEpochs; epoch++)
+            for (; epoch < _data.MaxEpochs; epoch++)
             {
                 var loss = TrainOnce(epoch);
 
@@ -51,7 +51,7 @@ public class BackPropagationWithGradientDescent : ITrainer
                 if (batchCount == _batchSize)
                 {
                     batchCount = 0;
-                    if (batchLoss / _batchSize < Data.MinError)
+                    if (batchLoss / _batchSize < _data.MinError)
                         break;
                     batchLoss = 0;
                 }
@@ -69,7 +69,7 @@ public class BackPropagationWithGradientDescent : ITrainer
     {
         const double momentum = 0.01;
 
-        var (inputs, expectedOutputs) = Data.GetInputsOutputs(epoch);
+        var (inputs, expectedOutputs) = _data.GetInputsOutputs(epoch);
 
         _ann.Run(inputs);
 
@@ -131,17 +131,17 @@ public class BackPropagationWithGradientDescent : ITrainer
             var currentDeltas =
                 currentLayer.Deltas
                 ?? Matrix<double>.Build.Dense(
-                    currentLayer.InputWeights!.RowCount,
+                    currentLayer.InputWeights.RowCount,
                     currentLayer.InputWeights.ColumnCount,
                     0.0
                 );
 
             // Calculate delta matrix
             var rowDeltas = new List<Vector<double>>();
-            for (var row = 0; row < currentLayer.InputWeights!.RowCount; row++)
+            for (var row = 0; row < currentLayer.InputWeights.RowCount; row++)
             {
                 rowDeltas.Add(
-                    currentLayer.Inputs.Multiply(LearningRate.Apply(currentLayer.Gradients![row]))
+                    currentLayer.Inputs.Multiply(_learningRate.Apply(currentLayer.Gradients![row]))
                 );
             }
 
@@ -155,6 +155,6 @@ public class BackPropagationWithGradientDescent : ITrainer
             currentLayer = currentLayer.InputLayer;
         }
 
-        return LossFunction.CalculateLoss(expectedOutputs, _ann.Outputs);
+        return _lossFunction.CalculateLoss(expectedOutputs, _ann.Outputs);
     }
 }

@@ -5,8 +5,6 @@ namespace Common.Maths.ActivationFunction;
 
 public class TanhActivator : IActivationFunction
 {
-    public double Delta { get; private set; }
-
     /// <summary>
     ///     y = tanh(x)
     /// </summary>

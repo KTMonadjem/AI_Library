@@ -5,8 +5,6 @@ namespace Common.Maths.ActivationFunction;
 
 public class SwishActivator : IActivationFunction
 {
-    public double Delta { get; private set; }
-
     /// <summary>
     ///     y = x * sigmoid(x)
     /// </summary>

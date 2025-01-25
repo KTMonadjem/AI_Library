@@ -9,7 +9,6 @@ public class Ann
 {
     private Vector<double> _outputs = null!;
     private ITrainer _trainer = null!;
-    private static readonly Random R = new();
 
     private Ann() { }
 
@@ -117,15 +116,6 @@ public class Ann
         Layer? previous = null;
         foreach (var layer in Layers)
         {
-            if (layer.InputWeights is null)
-            {
-                layer.InputWeights = Matrix<double>.Build.Dense(
-                    layer.NumberOfNeurons,
-                    (previous?.NumberOfNeurons ?? NumberOfInputs!.Value) + 1,
-                    (_, _) => R.NextDouble()
-                );
-            }
-
             if (previous is not null)
             {
                 previous.SetOutputLayer(layer);

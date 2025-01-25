@@ -111,8 +111,16 @@ public class AnnTests
 
         var firstLayerSize = 3;
         var secondLayerSize = 4;
-        var firstLayer = Layer.CreateWithRandomWeights(firstLayerSize, ActivationFunction);
-        var secondLayer = Layer.CreateWithRandomWeights(secondLayerSize, ActivationFunction);
+        var firstLayer = Layer.CreateWithRandomWeights(
+            firstLayerSize,
+            inputsSize,
+            ActivationFunction
+        );
+        var secondLayer = Layer.CreateWithRandomWeights(
+            secondLayerSize,
+            firstLayerSize,
+            ActivationFunction
+        );
 
         var layers = new List<Layer> { firstLayer, secondLayer };
 
