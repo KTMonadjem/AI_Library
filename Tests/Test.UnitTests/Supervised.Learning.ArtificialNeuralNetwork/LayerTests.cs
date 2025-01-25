@@ -77,7 +77,7 @@ public class LayerTests
 
     [TestCase(0, 0)]
     [TestCase(10, 1)]
-    public void CreateWithRandomWeights_Should_ThrowException_When_TooFewInputs(
+    public void CreateWithRandomWeights_Should_ThrowException_When_MinWeightGreaterOrEqualToMaxWeight(
         int minWeight,
         int maxWeight
     )
