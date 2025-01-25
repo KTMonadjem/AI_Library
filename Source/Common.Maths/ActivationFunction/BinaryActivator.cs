@@ -13,24 +13,19 @@ public class BinaryActivator : IActivationFunction
     /// <returns></returns>
     public (double Output, double Derivative) Activate(double input)
     {
-        return (input > 0 ? 1.0 : 0.0, Derive(input));
-    }
-
-    public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs)
-    {
-        return (
-            inputs.PointwiseCeiling().PointwiseMaximum(0.0),
-            Vector<double>.Build.DenseOfEnumerable(inputs.Select(_ => 0.0))
-        );
+        return (input > 0 ? 1.0 : 0.0, 0.0);
     }
 
     /// <summary>
-    ///     y' = 0
+    /// Activate a vector of inputs
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="inputs"></param>
     /// <returns></returns>
-    private static double Derive(double x)
+    public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs)
     {
-        return 0;
+        return (
+            inputs.PointwiseMinimum(1.0).PointwiseCeiling().PointwiseMaximum(0.0),
+            Vector<double>.Build.DenseOfEnumerable(inputs.Select(_ => 0.0))
+        );
     }
 }

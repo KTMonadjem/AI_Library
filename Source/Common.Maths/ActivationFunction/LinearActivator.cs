@@ -12,24 +12,16 @@ public class LinearActivator : IActivationFunction
     /// <returns></returns>
     public (double Output, double Derivative) Activate(double input)
     {
-        return (input, Derive(input));
-    }
-
-    public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs)
-    {
-        return (
-            inputs.PointwiseMaximum(0.0),
-            Vector<double>.Build.DenseOfEnumerable(inputs.Select(_ => 1.0))
-        );
+        return (input, 1.0);
     }
 
     /// <summary>
-    ///     y' = 1
+    ///     y = x
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="inputs"></param>
     /// <returns></returns>
-    private static double Derive(double x)
+    public (Vector<double> Outputs, Vector<double> Derivatives) Activate(Vector<double> inputs)
     {
-        return 1;
+        return (inputs, Vector<double>.Build.DenseOfEnumerable(inputs.Select(_ => 1.0)));
     }
 }
