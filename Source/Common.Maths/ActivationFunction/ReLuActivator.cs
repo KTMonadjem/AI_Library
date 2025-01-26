@@ -26,22 +26,6 @@ public class ReLuActivator : IActivationFunction
         return (inputs.PointwiseMaximum(0.0), Derive(inputs));
     }
 
-    public (Vector<double> Outputs, Vector<double> Derivatives) Activate1(Vector<double> inputs)
-    {
-        var outputs = new double[inputs.Count];
-        var derivatives = new double[inputs.Count];
-
-        for (var i = 0; i < inputs.Count; i++)
-        {
-            (outputs[i], derivatives[i]) = Activate(inputs[i]);
-        }
-
-        return (
-            Vector<double>.Build.DenseOfArray(outputs),
-            Vector<double>.Build.DenseOfArray(derivatives)
-        );
-    }
-
     /// <summary>
     ///     y' = 1 if x >= 0
     ///     y' = 0 if x < 0
