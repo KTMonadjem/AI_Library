@@ -163,20 +163,8 @@ public class Layer
         // Add a bias input
         Inputs = Vector<double>.Build.DenseOfEnumerable(Inputs.Append(1.0));
 
-        var summedInputs = InputWeights.Multiply(Inputs);
-
-        // TODO: Vector activation operations
-        var activations = new double[summedInputs.Count];
-        var derivatives = new double[summedInputs.Count];
-        for (var neuron = 0; neuron < summedInputs.Count; neuron++)
-        {
-            (activations[neuron], derivatives[neuron]) = ActivationFunction.Activate(
-                summedInputs[neuron]
-            );
-        }
-
-        Outputs = VectorBuilder.DenseOfArray(activations);
-        Derivatives = VectorBuilder.DenseOfArray(derivatives);
+        // Vector activation
+        (Outputs, Derivatives) = ActivationFunction.Activate(InputWeights.Multiply(Inputs));
     }
 
     /// <summary>

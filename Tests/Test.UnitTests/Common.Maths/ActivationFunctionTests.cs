@@ -5,9 +5,6 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace Tests.Common.Maths;
 
-// TODO: Performance profiling, vector vs multiple single
-// TODO: Benchmarks
-
 [TestFixture]
 public class ActivatorTests
 {
