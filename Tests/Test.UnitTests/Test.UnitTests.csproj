@@ -23,8 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Source\Common.Maths\Common.Maths.csproj"/>
-        <ProjectReference Include="..\..\Source\Domain.Model\Learning.Supervised.ArtificialNeuralNetwork.csproj" />
+        <ProjectReference Include="..\..\Common.Maths\Common.Maths.csproj"/>
+        <ProjectReference Include="..\..\Learning.Supervised.ArtificialNeuralNetwork\Learning.Supervised.ArtificialNeuralNetwork.csproj" />
     </ItemGroup>
 
 </Project>

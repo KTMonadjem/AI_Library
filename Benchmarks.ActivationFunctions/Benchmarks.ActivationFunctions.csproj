@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Source\Common.Maths\Common.Maths.csproj" />
+      <ProjectReference Include="..\Common.Maths\Common.Maths.csproj" />
     </ItemGroup>
 
 </Project>

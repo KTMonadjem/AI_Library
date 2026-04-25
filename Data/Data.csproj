@@ -1,15 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Common.Maths\Common.Maths.csproj"/>
-        <ProjectReference Include="..\Data\Data.csproj"/>
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
     </ItemGroup>
 
 </Project>
