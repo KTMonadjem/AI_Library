@@ -4,7 +4,7 @@ using BenchmarkDotNet.Running;
 using Common.Maths.ActivationFunction;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Benchmarks.ActivationFunctions;
+namespace Test.Benchmarks;
 
 [CsvExporter]
 [HtmlExporter]

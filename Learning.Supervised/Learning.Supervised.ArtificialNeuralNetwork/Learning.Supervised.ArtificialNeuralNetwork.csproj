@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
+        <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta2" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Learning.Supervised.Training\Learning.Supervised.Training.csproj" />
-        <ProjectReference Include="..\Common.Maths\Common.Maths.csproj"/>
-        <ProjectReference Include="..\Data\Data.csproj"/>
+        <ProjectReference Include="..\..\Common.Maths\Common.Maths.csproj"/>
+        <ProjectReference Include="..\..\Data\Data.csproj"/>
     </ItemGroup>
 
 </Project>
