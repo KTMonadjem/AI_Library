@@ -76,8 +76,19 @@ public class BackPropagationWithGradientDescent : ITrainer
         _ann.Run(inputs);
 
         // Perform gradient descent (via backprop)
-        var currentLayer = _ann.Layers.Last();
+        
+        // Gradient calculations
+        CalculateGradients(expectedOutputs);
 
+        // Weight updates
+        UpdateWeights(momentum);
+
+        return _lossFunction.CalculateLoss(expectedOutputs, _ann.Outputs);
+    }
+
+    private void CalculateGradients(Vector<double> expectedOutputs)
+    {
+        var currentLayer = _ann.Layers.Last();
         // Iterate backwards through all the layers
         // Calculate all gradients
         while (currentLayer?.Inputs is not null)
@@ -122,8 +133,11 @@ public class BackPropagationWithGradientDescent : ITrainer
 
             currentLayer = currentLayer.InputLayer;
         }
+    }
 
-        currentLayer = _ann.Layers.Last();
+    private void UpdateWeights(double momentum)
+    {
+        var currentLayer = _ann.Layers.Last();
 
         // Iterate backwards through all the layers
         // Calculate deltas and update weights
@@ -156,7 +170,5 @@ public class BackPropagationWithGradientDescent : ITrainer
 
             currentLayer = currentLayer.InputLayer;
         }
-
-        return _lossFunction.CalculateLoss(expectedOutputs, _ann.Outputs);
     }
 }

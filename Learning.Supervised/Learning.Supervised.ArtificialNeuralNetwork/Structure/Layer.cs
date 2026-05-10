@@ -54,6 +54,11 @@ public class Layer
     public Vector<double>? Gradients { get; set; }
 
     /// <summary>
+    /// The velocity for this layer
+    /// </summary>
+    public double Velocity { get; set; } = 0; 
+
+    /// <summary>
     /// The input vector to this layer for each neuron's previous activation
     /// <see cref="Activate"/>
     /// </summary>
